@@ -170,15 +170,10 @@ void RunPocess_Command_Handler(void)
    switch(run_t.gRunCommand_label){
 
       case RUN_POWER_ON: //2
-         run_t.power_off_recoder_times=0;
-
-       
-
-	
-		 run_t.power_on_run_update_data_flag=0;
+         run_t.power_off_recoder_times=0; 
+          run_t.power_on_run_update_data_flag=0;
       
-            
-			run_t.gRunCommand_label= UPDATE_DATA;
+          run_t.gRunCommand_label= UPDATE_DATA;
 	  break;
 
 	  case UPDATE_DATA: //3
