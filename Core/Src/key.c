@@ -398,12 +398,13 @@ void Process_Key_Handler(uint8_t keylabel)
 *****************************************************************/
 void Power_OnOff_Key_Handler(void)
 {
-     switch(run_t.key_power_tag){
+     if(run_t.key_power_tag==1){
+				run_t.key_power_tag=0xff;
 
-      case KEY_POWER_ON:
+     
 
                 run_t.power_key_interrupt_flag=0;
-    	        run_t.wifi_receive_power_off_flag=0;
+    	
                 
     	        SendData_PowerOnOff(1);
                 //HAL_Delay(10);
@@ -417,13 +418,13 @@ void Power_OnOff_Key_Handler(void)
                 run_t.wifi_power_on_flag = RUN_POWER_OFF_NULL; //divisive app pow
                 #endif 
 
-           // }
-      break;
+      }
+      else if(run_t.key_power_tag==2){
 
-      case KEY_POWER_OFF:
+	        run_t.key_power_tag=0xff;
             run_t.power_key_interrupt_flag=0;
 
-            run_t.wifi_receive_power_on_flag=0;
+           // run_t.wifi_receive_power_on_flag=0;
 
 		    SendData_PowerOnOff(0);
 			#if 0
@@ -437,14 +438,9 @@ void Power_OnOff_Key_Handler(void)
         
             #endif 
 		   
-          //  }
+       
 
-      break;
-            
-      default:
-          
-      break;
-
+  
      }
 
 }

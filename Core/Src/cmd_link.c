@@ -300,24 +300,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 				  
                  break;
 
-                 case 0x54 : //power on return confirm flag
                 
-                    
-                      run_t.wifi_receive_power_on_flag =1;
-                       state=0;
-		            run_t.decodeFlag=0;
-
-                 break;
-
-                 case 0x53: //power off return confirm flag
-              
-                    
-                    run_t.wifi_receive_power_off_flag =1;
-                     state=0;
-		            run_t.decodeFlag=0;
-
-                  
-                 break;
 
                  
 

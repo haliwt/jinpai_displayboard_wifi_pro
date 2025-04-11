@@ -165,16 +165,16 @@ static void DisplayPanel_DHT11_Value(void)
 void RunPocess_Command_Handler(void)
 {
    static uint8_t power_off_flag=0xff,power_off_recoder_times,timer_timing_flag;
-   static uint8_t the_firs_dc_power_on;
+ 
    
    switch(run_t.gRunCommand_label){
 
       case RUN_POWER_ON: //2
          run_t.power_off_recoder_times=0;
 
-         the_firs_dc_power_on=2;
+       
 
-		 run_t.wifi_receive_power_off_flag=0;
+	
 		 run_t.power_on_run_update_data_flag=0;
       
             
@@ -183,11 +183,7 @@ void RunPocess_Command_Handler(void)
 
 	  case UPDATE_DATA: //3
 
-    //    if(run_t.wifi_receive_power_on_flag ==0){
-	// 	 	   SendData_PowerOnOff(1);
-    //            HAL_Delay(5);
-    //    }
-      
+ 
       if(run_t.power_on_run_update_data_flag ==0){
         
         Power_On_Fun();
@@ -207,11 +203,11 @@ void RunPocess_Command_Handler(void)
             run_t.send_app_timer_minutes_one=0;
             run_t.send_app_timer_minutes_two=0;
             SendData_Time_Data(run_t.dispTime_hours);
-            HAL_Delay(5);
+            HAL_Delay(2);
             SendData_Works_Time(run_t.send_app_wokes_minutes_one ,run_t.send_app_wokes_minutes_two);
-            HAL_Delay(5);
+            HAL_Delay(2);
             SendData_Remaining_Time(run_t.send_app_timer_minutes_one, run_t.send_app_timer_minutes_two);
-            HAL_Delay(5);
+            HAL_Delay(2);
 
        }
 	   RunLocal_Smg_Process();
@@ -231,19 +227,8 @@ void RunPocess_Command_Handler(void)
 
 	  case RUN_POWER_OFF: //1
        
-//           do{
-//              
-//             if(run_t.wifi_receive_power_off_flag ==0){
-//		 	   SendData_PowerOnOff(0);
-//               HAL_Delay(1);
-//               power_off_id=1;
-//             }
-//             else{
-//                 power_off_id=0;
-//             }
-//              
-//            }while(power_off_id);
-          run_t.wifi_receive_power_on_flag = 0;
+
+      
           run_t.power_off_recoder_times=0;
           run_t.power_on_run_update_data_flag=0;
           run_t.timer_timing_define_flag = timing_donot;
@@ -265,16 +250,7 @@ void RunPocess_Command_Handler(void)
 
       
        timer_timing_flag=0;
-       if(the_firs_dc_power_on==0){
-
-            the_firs_dc_power_on++;
-       }
-       else if(run_t.wifi_receive_power_off_flag ==0 && the_firs_dc_power_on !=1){
-		 	 SendData_PowerOnOff(0);
-             HAL_Delay(5);
-               
-        }
-
+    
       
        if(run_t.power_off_recoder_times ==0){
          run_t.power_off_recoder_times++;

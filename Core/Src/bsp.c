@@ -15,6 +15,7 @@ void receive_copy_cmd(uint8_t cmd)
 		run_t.power_on_recoder_times++ ;
 		run_t.power_key_interrupt_flag=0;
 		run_t.key_power_on_flag= 0;
+	
 
 	break;
 
@@ -27,6 +28,7 @@ void receive_copy_cmd(uint8_t cmd)
 		run_t.power_on_recoder_times++ ;
 		run_t.key_power_on_flag = 1;
 		run_t.wifi_power_on_flag = RUN_POWER_OFF_NULL; //divisive app pow
+	   
 
 
 	break;

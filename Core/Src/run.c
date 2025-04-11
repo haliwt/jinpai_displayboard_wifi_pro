@@ -185,8 +185,8 @@ static void Receive_Wifi_Cmd(uint8_t cmd)
 		        run_t.gRunCommand_label = RUN_POWER_ON;
                 run_t.power_on_run_update_data_flag=0;
 				run_t.wifi_link_cloud_flag =WIFI_CLOUD_SUCCESS;
-                run_t.wifi_receive_power_on_flag = 1;
-                run_t.wifi_receive_power_off_flag =0;
+               // run_t.wifi_receive_power_on_flag = 1;
+                
 			break;
 
 
@@ -198,8 +198,7 @@ static void Receive_Wifi_Cmd(uint8_t cmd)
 		        run_t.gRunCommand_label = RUN_POWER_ON;
                 run_t.power_on_run_update_data_flag=0;
 				run_t.wifi_link_cloud_flag =WIFI_CLOUD_SUCCESS;
-                run_t.wifi_receive_power_on_flag =1;
-                run_t.wifi_receive_power_off_flag =0;
+              
 			break;
 
 			 
@@ -214,8 +213,7 @@ static void Receive_Wifi_Cmd(uint8_t cmd)
                run_t.power_on_run_update_data_flag=0;
                run_t.wifi_power_on_flag = RUN_POWER_OFF_NULL;
 			   run_t.wifi_link_cloud_flag =WIFI_CLOUD_SUCCESS;
-			   run_t.wifi_receive_power_off_flag =1;
-               run_t.wifi_receive_power_on_flag =0;
+			
             
 
 			 break;
