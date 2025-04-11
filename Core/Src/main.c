@@ -22,14 +22,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "smg.h"
-#include "cmd_link.h"
-#include "run.h"
-#include "key.h"
-#include "led.h"
-#include "single_mode.h"
-#include "display.h"
-#include "interrupt_manager.h"
+#include "bsp.h"
+
 //#include "delay.h"
 
 

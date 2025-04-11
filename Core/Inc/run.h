@@ -41,7 +41,8 @@ typedef enum _Signal{
 	WIFI_CMD,
 	WIFI_BEIJING_TIME,
 	WIFI_SET_TIMING,
-	WIFI_REF_DATA
+	WIFI_REF_DATA,
+	MAIN_BOARD_COPY_CMD
 }signal_t;
 
 typedef enum _WIFI_POWER_STATE_{

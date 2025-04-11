@@ -475,7 +475,7 @@ void TM1639_Write_2bit_TempData(uint8_t onebit,uint8_t twobit)
 
      TM1639_Write_OneByte(AddrC3H);//0xC1H->GRID_2->BIT_2
    
-         TM1639_Write_OneByte(segNumber_High[twobit]|0x80|seg_h);//display "2 :"
+     TM1639_Write_OneByte(segNumber_High[twobit]|0x80|seg_h);//display "2 :"
    
   
      TM1639_Stop();

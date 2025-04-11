@@ -1,9 +1,4 @@
-#include "cmd_link.h"
-#include "usart.h"
-#include "gpio.h"
-#include "run.h"
-#include "display.h"
-#include "led.h"
+#include "bsp.h"
 
 volatile static uint8_t transOngoingFlag; //interrupt Transmit flag bit , 1---stop,0--run
 uint8_t outputBuf[8];
@@ -13,6 +8,22 @@ uint8_t inputBuf[MAX_BUFFER_SIZE];
 
 
 
+void SendData_Copy_Cmd(uint8_t tdata)
+{
+
+        outputBuf[0]='T'; //4D
+		outputBuf[1]='Y'; //"T"->temperature
+		outputBuf[2]=tdata; //53	//
+		
+	    transferSize=3;
+		if(transferSize)
+		{
+			while(transOngoingFlag);
+			transOngoingFlag=1;
+			HAL_UART_Transmit_IT(&huart1,outputBuf,transferSize);
+		}
+
+}
 
 /****************************************************************************************************
 **
@@ -214,15 +225,21 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 				state=1; //=1
 			break;
 		case 1: //#1
-			if(inputBuf[0]=='A' ) //hex : 41 -'A'  -fixed master
+			if(inputBuf[0]=='A' )
 			{
 				state=2; 
 				
 			}
-			else if(inputBuf[0]=='R') //hex : 54 -'T'  -fixed slave
+			else if(inputBuf[0]=='R' ) 
 			{
+               
 				run_t.wifi_orderByMainboard_label = WIFI_REF_DATA;
 				state=3; 
+			}
+			else if(inputBuf[0]=='Y'){// O ->"copy"
+			     run_t.wifi_orderByMainboard_label = MAIN_BOARD_COPY_CMD;
+				 state=3; 
+
 			}
 			else
 				state=0; 
@@ -340,6 +357,16 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 			    run_t.gDry = inputBuf[0];
 				state = 4; 
 				 
+			break;
+
+
+			case MAIN_BOARD_COPY_CMD:
+
+                  //gpro_t.g_copy_cmd = inputBuf[0];
+				  receive_copy_cmd(inputBuf[0]);
+			      state = 0; 
+
+
 			break;
 			 
 			 

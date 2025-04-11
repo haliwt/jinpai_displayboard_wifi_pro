@@ -1,10 +1,5 @@
-#include "run.h"
-#include "smg.h"
-#include "gpio.h"
-#include "cmd_link.h"
-#include "led.h"
-#include "display.h"
-#include "single_mode.h"
+#include "bsp.h"
+
 
 RUN_T run_t;
 
@@ -183,8 +178,9 @@ static void Receive_Wifi_Cmd(uint8_t cmd)
 
 
           case WIFI_POWER_ON_NORMAL: //0xB0
-
-                run_t.wifi_power_on_flag = RUN_WIFI_NORMAL_POWER_ON;
+                
+                SendData_Copy_Cmd(copy_wifi_power_on);
+	            run_t.wifi_power_on_flag = RUN_WIFI_NORMAL_POWER_ON;
 				run_t.wifi_send_buzzer_sound = WIFI_POWER_ON_ITEM;
 		        run_t.gRunCommand_label = RUN_POWER_ON;
                 run_t.power_on_run_update_data_flag=0;
@@ -195,7 +191,7 @@ static void Receive_Wifi_Cmd(uint8_t cmd)
 
 
              case WIFI_POWER_ON_TIMER: //0xB1 //WT.EDIT 2023.08.21
-
+                 SendData_Copy_Cmd(copy_wifi_timer_power_on);
                 run_t.wifi_power_on_flag = RUN_WIFI_TIMER_POWER_ON;
              
 				run_t.wifi_send_buzzer_sound = WIFI_POWER_ON_ITEM;
@@ -210,7 +206,7 @@ static void Receive_Wifi_Cmd(uint8_t cmd)
 			 
 
 			 case WIFI_POWER_OFF: //turn off 
-                
+               SendData_Copy_Cmd(copy_wifi_power_off);
 			   run_t.wifi_send_buzzer_sound = WIFI_POWER_OFF_ITEM;
 			   run_t.gRunCommand_label = POWER_OFF_PROCESS; //RUN_POWER_OFF; //WT.EDIT 2023.08-16
 			   run_t.power_off_recoder_times=0; //WT.EDIT 2023.08.16

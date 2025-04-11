@@ -16,9 +16,14 @@ typedef enum{
 }wifi_cloud_state;
 
 
+
+
 void SendData_PowerOnOff(uint8_t index);
 
 void SendData_Set_Wifi(uint8_t hdata);
+
+void SendData_Copy_Cmd(uint8_t tdata);
+
 void SendData_Set_Command(uint8_t hdata);
 
 void SendData_Temp_Data(uint8_t tdata);
@@ -31,6 +36,8 @@ void SendData_Buzzer(void);
 void SendData_Works_Time(uint8_t tdata,uint8_t tdata_2);
 
 void SendData_Remaining_Time(uint8_t tdata,uint8_t tdata_2);
+
+
 void USART1_Cmd_Error_Handler(void);
 
 

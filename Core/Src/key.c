@@ -406,7 +406,8 @@ void Power_OnOff_Key_Handler(void)
     	        run_t.wifi_receive_power_off_flag=0;
                 
     	        SendData_PowerOnOff(1);
-                HAL_Delay(10);
+                //HAL_Delay(10);
+                #if 0
                 run_t.gTimer_set_temp_times=0; //conflict with send temperatur value
                 run_t.gRunCommand_label =RUN_POWER_ON;
                 run_t.power_on_run_update_data_flag=0;
@@ -414,6 +415,7 @@ void Power_OnOff_Key_Handler(void)
                 run_t.power_on_recoder_times++ ;
                 run_t.key_power_on_flag = 1;
                 run_t.wifi_power_on_flag = RUN_POWER_OFF_NULL; //divisive app pow
+                #endif 
 
            // }
       break;
@@ -424,7 +426,8 @@ void Power_OnOff_Key_Handler(void)
             run_t.wifi_receive_power_on_flag=0;
 
 		    SendData_PowerOnOff(0);
-            HAL_Delay(10);
+			#if 0
+           // HAL_Delay(10);
             run_t.wifi_power_on_flag = RUN_POWER_OFF_NULL; //divisive app power on and key power on
 		    run_t.gRunCommand_label =RUN_POWER_OFF;
             run_t.power_on_run_update_data_flag=0;
@@ -432,7 +435,7 @@ void Power_OnOff_Key_Handler(void)
             run_t.power_key_interrupt_flag=0;
             run_t.key_power_on_flag= 0;
         
-           
+            #endif 
 		   
           //  }
 
