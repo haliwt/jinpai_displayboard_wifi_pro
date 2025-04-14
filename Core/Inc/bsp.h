@@ -1,5 +1,5 @@
 #ifndef __BSP_H
-#define __BSP_H
+#define __BSP_h
 #include "main.h"
 
 #include "tim.h"
@@ -13,7 +13,7 @@
 #include "run.h"
 #include "key.h"
 #include "led.h"
-#include "POWER.h"
+#include "single_mode.h"
 #include "display.h"
 #include "interrupt_manager.h"
 
@@ -25,6 +25,12 @@ typedef enum _power_onoff_state{
 
 
 }power_onoff_state;
+
+
+typedef enum power_special_off_state{
+
+  power_off_run = 1,
+}power_off_special;
 
 
 typedef enum{

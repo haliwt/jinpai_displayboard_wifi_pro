@@ -126,12 +126,19 @@ int main(void)
            if(run_t.power_key_interrupt_flag==1){//if(POWER_KEY_VALUE()==1){
             Power_OnOff_Key_Handler();
            }
-		   
-	       if(gpro_t.gPower_On == power_on){
+
+		   switch(gpro_t.gPower_On){
+
+		   case power_on:
+	      
 		      power_on_handler();
-	       }
-           else{
+	       break;
+
+		   case power_off:
+        
               power_off_handler();
+
+		   break;
 
 		   }
            

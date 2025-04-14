@@ -189,6 +189,7 @@ void EXTI4_15_IRQHandler(void)
        run_t.power_key_interrupt_flag=1;
   
 	   run_t.key_power_tag=1;
+	   gpro_t.main_process_step=0;
 	   
 	    
 
@@ -196,6 +197,7 @@ void EXTI4_15_IRQHandler(void)
    else{
       run_t.power_key_interrupt_flag=1;
       run_t.key_power_tag =2;
+      gpro_t.main_process_step=0;
 
 
    }

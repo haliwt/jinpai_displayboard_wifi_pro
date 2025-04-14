@@ -8,7 +8,7 @@ void (*single_add_fun)(void);
 void (*single_buzzer_fun)(void);
 void (*sendAi_usart_fun)(uint8_t senddat);
 void (*dispose_key)(uint8_t dsdat);
-static void Setup_Timer_Times(void);
+//static void Setup_Timer_Times(void);
 
 static void Timing_Handler(void);
 static void RunLocal_Smg_Process(void);
@@ -73,7 +73,7 @@ static void Timing_Handler(void)
 			    run_t.timer_counter_to_zero =1;
 
 			    SendData_Time_Data(0); //send timer timing is zero ,this is times is over
-                 HAL_Delay(300);
+                HAL_Delay(5);
 			    run_t.timer_timing_define_flag =  timing_power_off;
 
 				run_t.gTimer_set_temp_times=0; //conflict with send temperatur value 
@@ -99,7 +99,7 @@ static void Timing_Handler(void)
        
 		
 		SendData_PowerOnOff(0);
-		HAL_Delay(2);
+		HAL_Delay(5);
 		
 	
 	  run_t.timer_timing_define_flag = 0xff;
@@ -233,13 +233,13 @@ void power_off_handler(void)
           run_t.send_works_times_to_app=0;
 		  run_t.wifi_power_on_flag = RUN_NULL;
 	      
-		  gpro_t.main_process_step = POWER_OFF_PROCESS; //run_t.gRunCommand_label =POWER_OFF_PROCESS;
+		  gpro_t.main_process_step = power_off_run ; //run_t.gRunCommand_label =POWER_OFF_PROCESS;
 	  break;
 
 
 	  
 
-	  case POWER_OFF_PROCESS: //4
+	  case power_off_run : //1
 	  
           Power_Off_Led_Off();
           
@@ -334,21 +334,21 @@ static void Display_Works_Time_Fun(void)
             run_t.gTimes_time_seconds=0;
             run_t.send_works_times_to_app=1;
 			run_t.works_dispTime_minutes++; //1 minute 
-			run_t.send_app_wokes_total_minutes_data++;
+			//run_t.send_app_wokes_total_minutes_data++;
             run_t.send_app_wokes_minutes_two++;
 			if(run_t.works_dispTime_minutes> 59){ //1 hour
 			run_t.works_dispTime_minutes=0;
 			run_t.works_dispTime_hours++;
 			if(run_t.works_dispTime_hours > 24){
-			run_t.works_dispTime_hours =0;
+				run_t.works_dispTime_hours =0;
 			}
-        
+           #if 0
             if(run_t.send_app_wokes_total_minutes_data >255){
                run_t.send_app_wokes_minutes_one++;
                run_t.send_app_wokes_minutes_two=0;
                run_t.send_app_wokes_total_minutes_data=0;
             }
-		
+		    #endif 
     
           
             }
@@ -373,7 +373,7 @@ static void Send_WorksTime_ToApp_DonotDisplay_Fun(void)
 		   run_t.gTimes_time_seconds=0;
 		   run_t.send_works_times_to_app=1;
 		   run_t.works_dispTime_minutes++; //1 minute 
-		   run_t.send_app_wokes_total_minutes_data++;
+		   //run_t.send_app_wokes_total_minutes_data++;
 		   run_t.send_app_wokes_minutes_two++;
 		   if(run_t.works_dispTime_minutes> 59){ //1 hour
 		   run_t.works_dispTime_minutes=0;
@@ -381,13 +381,14 @@ static void Send_WorksTime_ToApp_DonotDisplay_Fun(void)
 		   if(run_t.works_dispTime_hours > 24){
 		   run_t.works_dispTime_hours =0;
 		   }
-	   
+		   
+	    #if 0
 		   if(run_t.send_app_wokes_total_minutes_data >255){
 			  run_t.send_app_wokes_minutes_one++;
 			  run_t.send_app_wokes_minutes_two=0;
 			  run_t.send_app_wokes_total_minutes_data=0;
 		   }
-	   
+	      #endif 
    
 		 
 		   }

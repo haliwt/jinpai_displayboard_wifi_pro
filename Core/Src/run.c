@@ -308,6 +308,7 @@ void Power_On_Fun(void)
 		run_t.gTimes_time_seconds=0;
 		run_t.dispTime_hours=0;
 		run_t.dispTime_minutes =0;
+		run_t.send_app_timer_total_minutes_data=0;
 		Power_ON_Led(); //WT.EDIT 2025.04.07
     }
  
