@@ -305,6 +305,9 @@ void Power_On_Fun(void)
 		run_t.gBug =1;
 	   	run_t.gUltrasonic =1;
 		run_t.timer_timing_define_flag=timing_donot;
+		run_t.gTimes_time_seconds=0;
+		run_t.dispTime_hours=0;
+		run_t.dispTime_minutes =0;
 		Power_ON_Led(); //WT.EDIT 2025.04.07
     }
  

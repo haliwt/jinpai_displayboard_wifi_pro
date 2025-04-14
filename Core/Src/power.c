@@ -165,6 +165,7 @@ void power_on_handler(void)
 	
 			run_t.timer_timing_define_flag = timing_donot;
 			run_t.send_works_times_to_app=0;
+			run_t.gTimes_time_seconds=0; //
 			
 		   if(run_t.wifi_power_on_flag !=RUN_WIFI_TIMER_POWER_ON){
 			run_t.dispTime_hours=0;

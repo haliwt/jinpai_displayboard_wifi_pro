@@ -40,12 +40,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
      
 	 
 	   run_t.gTimer_usart_error++;
+       run_t.gTimer_Counter ++;
+	   run_t.gTimes_time_seconds ++;
 
-		if(gpro_t.gPower_On==1){
-		    run_t.gTimer_Counter ++;
-		    run_t.gTimes_time_seconds ++;
-
-		}
+		
 		
 	}
     
