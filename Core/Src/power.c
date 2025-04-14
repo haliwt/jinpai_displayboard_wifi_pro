@@ -165,7 +165,7 @@ void power_on_handler(void)
 	
 			run_t.timer_timing_define_flag = timing_donot;
 			run_t.send_works_times_to_app=0;
-			run_t.gTimes_time_seconds=0; //
+			run_t.gTimes_time_counter_seconds=0; //
 			
 		   if(run_t.wifi_power_on_flag !=RUN_WIFI_TIMER_POWER_ON){
 			run_t.dispTime_hours=0;
@@ -330,8 +330,8 @@ static void SetTemperature_Function(void)
 static void Display_Works_Time_Fun(void)
 {
 
-     if(run_t.gTimes_time_seconds > 59 ){
-            run_t.gTimes_time_seconds=0;
+     if(run_t.gTimes_time_counter_seconds > 59 ){
+            run_t.gTimes_time_counter_seconds=0;
             run_t.send_works_times_to_app=1;
 			run_t.works_dispTime_minutes++; //1 minute 
 			//run_t.send_app_wokes_total_minutes_data++;
@@ -369,8 +369,8 @@ static void Display_Works_Time_Fun(void)
 static void Send_WorksTime_ToApp_DonotDisplay_Fun(void)
 {
 //send to APP works times every minute onece
-   if(run_t.gTimes_time_seconds > 59 && run_t.timer_timing_define_flag ==timing_success && run_t.temp_set_timer_timing_flag ==0){
-		   run_t.gTimes_time_seconds=0;
+   if(run_t.gTimes_time_counter_seconds > 59 && run_t.timer_timing_define_flag ==timing_success && run_t.temp_set_timer_timing_flag ==0){
+		   run_t.gTimes_time_counter_seconds=0;
 		   run_t.send_works_times_to_app=1;
 		   run_t.works_dispTime_minutes++; //1 minute 
 		   //run_t.send_app_wokes_total_minutes_data++;

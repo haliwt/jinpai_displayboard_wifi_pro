@@ -179,7 +179,7 @@ void Process_Key_Handler(uint8_t keylabel)
                if(run_t.wifi_led_fast_blink_flag==0){
 
                   SendData_Set_Wifi(0x01);
-                  HAL_Delay(1);
+                  HAL_Delay(5);
                   wifi_look_for =1;
 
                }

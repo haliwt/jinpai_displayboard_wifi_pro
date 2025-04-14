@@ -60,6 +60,7 @@ typedef struct COMP_CMD_T{
 extern main_process_t  gpro_t;
 
 
+void displaybaord_process_handler(void);
 
 
 void receive_copy_cmd(uint8_t cmd);

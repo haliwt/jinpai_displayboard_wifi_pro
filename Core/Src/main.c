@@ -127,20 +127,7 @@ int main(void)
             Power_OnOff_Key_Handler();
            }
 
-		   switch(gpro_t.gPower_On){
-
-		   case power_on:
-	      
-		      power_on_handler();
-	       break;
-
-		   case power_off:
-        
-              power_off_handler();
-
-		   break;
-
-		   }
+		  displaybaord_process_handler();
            
 		   USART1_Cmd_Error_Handler();
 			   
