@@ -1,5 +1,5 @@
 #ifndef __BSP_H
-#define __BSP_h
+#define __BSP_H
 #include "main.h"
 
 #include "tim.h"
@@ -13,9 +13,18 @@
 #include "run.h"
 #include "key.h"
 #include "led.h"
-#include "single_mode.h"
+#include "POWER.h"
 #include "display.h"
 #include "interrupt_manager.h"
+
+
+typedef enum _power_onoff_state{
+
+    power_off,
+	power_on
+
+
+}power_onoff_state;
 
 
 typedef enum{
@@ -34,6 +43,8 @@ typedef enum{
 typedef struct COMP_CMD_T{
 
    uint8_t g_copy_cmd ;
+   uint8_t gPower_On;
+   uint8_t main_process_step;
 
 
 

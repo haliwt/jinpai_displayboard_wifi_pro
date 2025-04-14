@@ -1,12 +1,12 @@
-#ifndef __SINGLE_MODE_
-#define __SINGLE_MODE_
+#ifndef __POWER_H_
+#define __POWER_H_
 #include "main.h"
 
 typedef enum {
 
     RUN_POWER_ON=0,
-	UPDATE_DATA,
-    POWER_OFF_PROCESS,
+	UPDATE_DATA=1,
+    POWER_OFF_PROCESS=3,
     RUN_WIFI_NORMAL_POWER_ON,
     RUN_WIFI_TIMER_POWER_ON,
     RUN_NULL,

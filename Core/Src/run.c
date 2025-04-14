@@ -42,7 +42,7 @@ void Decode_Handler(void)
 **********************************************************************/
 void Power_Off(void)
 {
-    	 if(run_t.gPower_On ==POWER_OFF){
+    	 if(gpro_t.gPower_On ==power_off){
 
 			Smg_AllOff();
             SMG_POWER_OFF()	;
@@ -84,7 +84,7 @@ void Receive_MainBoard_Data_Handler(uint8_t cmd)
 	 break;
 
 	 case WIFI_TEMP: //5->set temperature value
-	       if(run_t.gPower_On ==1){
+	       if(gpro_t.gPower_On ==1){
 		   	   run_t.set_temperature_flag=1;
 			  
 			   
@@ -99,7 +99,7 @@ void Receive_MainBoard_Data_Handler(uint8_t cmd)
 
 	 case PANEL_DATA://0X02
 	   
-        if(run_t.gPower_On ==1){
+        if(gpro_t.gPower_On ==1){
         hum1 =  run_t.gReal_humtemp[0]/10 %10;  //Humidity 
         hum2 =  run_t.gReal_humtemp[0]%10;
         
@@ -116,7 +116,7 @@ void Receive_MainBoard_Data_Handler(uint8_t cmd)
       break;
 
        case WIFI_BEIJING_TIME: 
-         if(run_t.wifi_link_cloud_flag ==1 && run_t.gPower_On==1){
+         if(run_t.wifi_link_cloud_flag ==1 && gpro_t.gPower_On==1){
           
                
 			 m=(run_t.dispTime_hours ) /10;
@@ -181,12 +181,13 @@ static void Receive_Wifi_Cmd(uint8_t cmd)
                 
                 SendData_Copy_Cmd(copy_wifi_power_on);
 	            HAL_Delay(5);
+		        gpro_t.gPower_On = power_on;
+				gpro_t.main_process_step =0;
 	            run_t.wifi_power_on_flag = RUN_WIFI_NORMAL_POWER_ON;
 				run_t.wifi_send_buzzer_sound = WIFI_POWER_ON_ITEM;
-		        run_t.gRunCommand_label = RUN_POWER_ON;
-                run_t.power_on_run_update_data_flag=0;
+		    
 				run_t.wifi_link_cloud_flag =WIFI_CLOUD_SUCCESS;
-               // run_t.wifi_receive_power_on_flag = 1;
+              
                 
 			break;
 
@@ -194,11 +195,13 @@ static void Receive_Wifi_Cmd(uint8_t cmd)
              case WIFI_POWER_ON_TIMER: //0xB1 //WT.EDIT 2023.08.21
                  SendData_Copy_Cmd(copy_wifi_timer_power_on);
 				 HAL_Delay(5);
+			 
+			    gpro_t.gPower_On = power_on;
+				gpro_t.main_process_step =0;
                 run_t.wifi_power_on_flag = RUN_WIFI_TIMER_POWER_ON;
              
 				run_t.wifi_send_buzzer_sound = WIFI_POWER_ON_ITEM;
-		        run_t.gRunCommand_label = RUN_POWER_ON;
-                run_t.power_on_run_update_data_flag=0;
+		      
 				run_t.wifi_link_cloud_flag =WIFI_CLOUD_SUCCESS;
               
 			break;
@@ -210,10 +213,11 @@ static void Receive_Wifi_Cmd(uint8_t cmd)
                SendData_Copy_Cmd(copy_wifi_power_off);
 			   HAL_Delay(5);
 			   run_t.wifi_send_buzzer_sound = WIFI_POWER_OFF_ITEM;
-			   run_t.gRunCommand_label = POWER_OFF_PROCESS; //RUN_POWER_OFF; //WT.EDIT 2023.08-16
-			   run_t.power_off_recoder_times=0; //WT.EDIT 2023.08.16
-			   run_t.power_on_recoder_times++;
-               run_t.power_on_run_update_data_flag=0;
+			   gpro_t.gPower_On = power_off;
+			   gpro_t.main_process_step =0;
+		
+			
+             
                run_t.wifi_power_on_flag = RUN_POWER_OFF_NULL;
 			   run_t.wifi_link_cloud_flag =WIFI_CLOUD_SUCCESS;
 			
@@ -222,14 +226,14 @@ static void Receive_Wifi_Cmd(uint8_t cmd)
 			 break;
 
 			 case WIFI_KILL_ON: //kill turn on plasma
-			  if(run_t.gPower_On==1){
+			  if(gpro_t.gPower_On==1){
                	run_t.gPlasma = 1;
 			        
              } 
 			 break;
 
 			 case WIFI_KILL_OFF: //kill turn off
-                if(run_t.gPower_On==1){
+                if(gpro_t.gPower_On==1){
 			 	  run_t.gPlasma =0;
 				  
 		          
@@ -237,7 +241,7 @@ static void Receive_Wifi_Cmd(uint8_t cmd)
 			 break;
 
 			 case WIFI_PTC_ON://dry turn on
-                if(run_t.gPower_On==1){
+                if(gpro_t.gPower_On==1){
 			        run_t.gDry =1;
                     
                  
@@ -246,7 +250,7 @@ static void Receive_Wifi_Cmd(uint8_t cmd)
 
 			 case WIFI_PTC_OFF: //dry turn off
                
-			 	if(run_t.gPower_On==1){
+			 	if(gpro_t.gPower_On==1){
 					run_t.gDry=0;
                  
 		           
@@ -256,7 +260,7 @@ static void Receive_Wifi_Cmd(uint8_t cmd)
 
 			 case WIFI_SONIC_ON:  //drive bug
 		
-				 if(run_t.gPower_On==1){		   
+				 if(gpro_t.gPower_On==1){		   
 				  run_t.gUltrasonic =1; //turn on 
 			
 				 
@@ -265,7 +269,7 @@ static void Receive_Wifi_Cmd(uint8_t cmd)
 			 break;
 
 			 case WIFI_SONIC_OFF: //drive bug turn off
-			 	if(run_t.gPower_On==1){
+			 	if(gpro_t.gPower_On==1){
 				    run_t.gUltrasonic=0;
 					
 			   }
@@ -281,21 +285,29 @@ static void Receive_Wifi_Cmd(uint8_t cmd)
         }
    
 }
+/**********************************************
+*
+*Functin Name: void Power_On_Fun(void)
+*Function : 
+*Input Ref:  NO
+*Return Ref: NO
 
+***********************************************/
 void Power_On_Fun(void)
 {
                 
    static uint8_t hour_decade,hour_unit,minutes_one,minutes_two;
 
-   if(run_t.wifi_power_on_flag ==RUN_WIFI_NORMAL_POWER_ON || run_t.key_power_on_flag==1){
+   if(run_t.wifi_power_on_flag !=RUN_WIFI_TIMER_POWER_ON){
 	
 		run_t.gPlasma=1;
 		run_t.gDry =1;
 		run_t.gBug =1;
 	   	run_t.gUltrasonic =1;
+		run_t.timer_timing_define_flag=timing_donot;
 		Power_ON_Led(); //WT.EDIT 2025.04.07
     }
-    run_t.gPower_On=1;
+ 
 
     run_t.time_led_flag=1;
 	
@@ -304,6 +316,7 @@ void Power_On_Fun(void)
 
 	
 	 powe_on_normal();//WT.EDIT.2025.04.07
+     #if 0
 
 	 if(run_t.timer_counter_to_zero ==1){
 
@@ -319,8 +332,10 @@ void Power_On_Fun(void)
 		   run_t.works_dispTime_hours=0;
 		   run_t.works_dispTime_minutes=0;
 		   SendData_Time_Data(0); 
-
+           HAL_Delay(5);
 		}
+
+	
 	    else if(run_t.timer_timing_define_flag==timing_success || run_t.temp_set_timer_timing_flag== 1){ //power on remeber last powr off of reference
 
 	     run_t.dispTime_hours = run_t.define_initialization_timer_time_hours ;
@@ -330,7 +345,10 @@ void Power_On_Fun(void)
 		 run_t.send_app_timer_minutes_one = run_t.send_app_timer_total_minutes_data >> 8;
 		 run_t.send_app_timer_minutes_two = run_t.send_app_timer_total_minutes_data & 0x00ff;
 		 SendData_Remaining_Time(run_t.send_app_timer_minutes_one, run_t.send_app_timer_minutes_two);
-       }
+         HAL_Delay(5);
+		}
+
+	
        else{
 	         run_t.dispTime_hours = 0;
 			 run_t.dispTime_minutes = 0;
@@ -342,7 +360,7 @@ void Power_On_Fun(void)
 			 SendData_Works_Time(run_t.send_app_wokes_minutes_one, run_t.send_app_wokes_minutes_two);
 			 HAL_Delay(5);
 		}
-         
+     #endif  
         
 
 	  hour_decade=(run_t.dispTime_hours ) /10;
@@ -358,7 +376,7 @@ void Power_On_Fun(void)
 	  run_t.hours_two_bit = hour_unit;
 	  run_t.minutes_one_bit =  minutes_one;
       
-	 TM1639_Write_4Bit_Time(hour_decade,run_t.hours_two_bit,run_t.minutes_one_bit,minutes_two,0);
+	  TM1639_Write_4Bit_Time(hour_decade,run_t.hours_two_bit,run_t.minutes_one_bit,minutes_two,0);
       Display_DHT11_Value();
 	  powe_on_normal();//WT.EDIT.2025.04.07
     
@@ -385,11 +403,7 @@ void Power_Off_Fun(void)
         run_t.gWifi =0;
       
 	
-	    run_t.gPower_On=POWER_OFF;
-		
-
-		
-        Power_Off_Led_Off();
+	   Power_Off_Led_Off();
 
   
 } 

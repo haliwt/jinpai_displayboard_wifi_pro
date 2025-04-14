@@ -22,9 +22,7 @@
 #include "stm32g0xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "run.h"
-#include "key.h"
-#include "single_mode.h"
+#include "bsp.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -186,17 +184,18 @@ void EXTI4_15_IRQHandler(void)
   if(POWER_KEY_VALUE() ==1 && run_t.power_times==1){
 			
 	
-    if(run_t.gPower_On ==POWER_OFF || run_t.gRunCommand_label==POWER_OFF_PROCESS || run_t.gPower_On ==0xff){
+    if(gpro_t.gPower_On ==power_off){
 		
-        run_t.power_key_interrupt_flag=1;
+       run_t.power_key_interrupt_flag=1;
   
-	   run_t.key_power_tag=1;//RUN_POWER_ON;
+	   run_t.key_power_tag=1;
+	   
 	    
 
    }
    else{
       run_t.power_key_interrupt_flag=1;
-      run_t.key_power_tag =2;//RUN_POWER_ON;
+      run_t.key_power_tag =2;
 
 
    }

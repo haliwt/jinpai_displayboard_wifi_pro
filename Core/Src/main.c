@@ -108,10 +108,8 @@ int main(void)
 
           case 0:
 	        HAL_Delay(2000);
-			run_t.gPower_On=0xff;
-			run_t.gRunCommand_label =POWER_OFF_PROCESS;
-            run_t.power_off_recoder_times =0; //WT.EDIT 2023.08.16
-			run_t.power_times=1;
+			gpro_t.gPower_On=power_off;
+            run_t.power_times=1;
             run_t.first_power_on_times=1;
                
 
@@ -128,9 +126,14 @@ int main(void)
            if(run_t.power_key_interrupt_flag==1){//if(POWER_KEY_VALUE()==1){
             Power_OnOff_Key_Handler();
            }
-	      
-		   RunPocess_Command_Handler();
-           
+		   
+	       if(gpro_t.gPower_On == power_on){
+		      power_on_handler();
+	       }
+           else{
+              power_off_handler();
+
+		   }
            
 		   USART1_Cmd_Error_Handler();
 			   

@@ -1,5 +1,4 @@
-#include "led.h"
-#include "run.h"
+#include "bsp.h"
 
 void (*panel_led_fun)(void);
 

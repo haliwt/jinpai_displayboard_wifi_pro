@@ -59,20 +59,19 @@ typedef struct __RUN{
    uint8_t keyvalue;
    uint8_t power_key;
    uint8_t gTemperature_timer_flag;
-   uint8_t gPower_On;
    uint8_t gRun_flag;
    uint8_t power_times;
    
    uint8_t keyAdd_continue;
    uint8_t keyDec_continue;
-   uint8_t gRunCommand_label;
+   //uint8_t gRunCommand_label;
 
 
    uint8_t gTemperature;
  
    uint8_t gTimer_Counter;
    //key
-   uint8_t key_power_on_flag;
+  
    
   
   
@@ -131,8 +130,8 @@ typedef struct __RUN{
    uint8_t key_power_tag;
 
    //power on or off
-    uint8_t power_off_recoder_times;
-    uint8_t power_on_run_update_data_flag;
+   
+   
   
 	
    uint8_t gReal_humtemp[2];
@@ -167,7 +166,7 @@ typedef struct __RUN{
    uint8_t gTimer_wifi_connect_counter;
    uint8_t temp_set_timer_timing_flag;
    uint8_t gTimer_key_timing;
-   uint8_t power_on_recoder_times;
+
 
    //timer timing 
    uint8_t gTimer_set_temp_times;

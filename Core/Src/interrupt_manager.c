@@ -1,5 +1,4 @@
-#include "interrupt_manager.h"
-#include "run.h"
+#include "bsp.h"
 
 
 /*******************************************************************************
@@ -42,7 +41,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	 
 	   run_t.gTimer_usart_error++;
 
-		if(run_t.gPower_On==1){
+		if(gpro_t.gPower_On==1){
 		    run_t.gTimer_Counter ++;
 		    run_t.gTimes_time_seconds ++;
 

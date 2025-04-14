@@ -1,11 +1,4 @@
-#include "key.h"
-#include "gpio.h"
-#include "run.h"
-#include "smg.h"
-#include "cmd_link.h"
-#include "display.h"
-#include "single_mode.h"
-#include "led.h"
+#include "bsp.h"
 
 
 
@@ -174,7 +167,7 @@ void Process_Key_Handler(uint8_t keylabel)
   
      
 	  case LINK_WIFI_KEY_ID:
-	  	if(run_t.gPower_On ==1){
+	  	if(gpro_t.gPower_On ==1){
        
             
             SendData_Set_Wifi(0x01);
@@ -207,7 +200,7 @@ void Process_Key_Handler(uint8_t keylabel)
 	  break;
 
 	  case MODEL_KEY_ID://model_key:
-		if(run_t.gPower_On ==1){
+		if(gpro_t.gPower_On ==1){
 			run_t.temp_set_timer_timing_flag=1;
 			
 			SendData_Buzzer();//single_buzzer_fun();
@@ -221,7 +214,7 @@ void Process_Key_Handler(uint8_t keylabel)
 	  break;
 
 	  case ADD_KEY_ID://add_key:
-	  	 if(run_t.gPower_On ==1){
+	  	 if(gpro_t.gPower_On ==1){
 			SendData_Buzzer();//single_buzzer_fun();
 
 		  switch(run_t.temp_set_timer_timing_flag){
@@ -271,7 +264,7 @@ void Process_Key_Handler(uint8_t keylabel)
 	  break;
 
 	  case DEC_KEY_ID://dec_key:
-	   if(run_t.gPower_On ==1){
+	   if(gpro_t.gPower_On ==1){
 			SendData_Buzzer();//single_buzzer_fun();
 		 switch(run_t.temp_set_timer_timing_flag){
 
@@ -324,7 +317,7 @@ void Process_Key_Handler(uint8_t keylabel)
 	  break;
 
 	   case DRY_KEY_ID://0x02: //CIN6  ->DRY KEY 
-          if(run_t.gPower_On ==1){
+          if(gpro_t.gPower_On ==1){
 		
 			  if(run_t.gDry== 1){
 				    run_t.gDry =0;
@@ -339,7 +332,7 @@ void Process_Key_Handler(uint8_t keylabel)
          break;
 
 		 case PLASMA_KEY_ID: //0x04: //CIN5  -> plasma ->STERILIZATION KEY 
-             if(run_t.gPower_On ==1){
+             if(gpro_t.gPower_On ==1){
 			
               
 			   if(run_t.gPlasma ==1){  //turun off kill 
@@ -358,7 +351,7 @@ void Process_Key_Handler(uint8_t keylabel)
         break;
 
 		 case ULTRASONIC_KEY_ID: //0x08: //Fan KEY 
-              if(run_t.gPower_On ==1){
+              if(gpro_t.gPower_On ==1){
                    
                 if(run_t.gUltrasonic==0){
  					run_t.gUltrasonic =1; //tur ON
@@ -399,14 +392,11 @@ void Process_Key_Handler(uint8_t keylabel)
 void Power_OnOff_Key_Handler(void)
 {
      if(run_t.key_power_tag==1){
-				run_t.key_power_tag=0xff;
-
-     
-
-                run_t.power_key_interrupt_flag=0;
+		  run_t.key_power_tag=0xff;
+		  run_t.power_key_interrupt_flag=0;
     	
-                
-    	        SendData_PowerOnOff(1);
+           SendData_PowerOnOff(1);
+		   HAL_Delay(5);
                 //HAL_Delay(10);
                 #if 0
                 run_t.gTimer_set_temp_times=0; //conflict with send temperatur value
@@ -424,9 +414,8 @@ void Power_OnOff_Key_Handler(void)
 	        run_t.key_power_tag=0xff;
             run_t.power_key_interrupt_flag=0;
 
-           // run_t.wifi_receive_power_on_flag=0;
-
 		    SendData_PowerOnOff(0);
+		    HAL_Delay(5);
 			#if 0
            // HAL_Delay(10);
             run_t.wifi_power_on_flag = RUN_POWER_OFF_NULL; //divisive app power on and key power on
@@ -463,7 +452,7 @@ void SetTimer_Temperature_Number_Blink(void)
 	switch(run_t.temp_set_timer_timing_flag){
 
 	case TIMER_TIMING:
-	if(run_t.gTimer_key_timing > 4  && set_timer_flag ==0 && run_t.gPower_On==1){
+	if(run_t.gTimer_key_timing > 4  && set_timer_flag ==0 && gpro_t.gPower_On==1){
 				
 		set_timer_flag++;
 		run_t.gTimer_key_timing =0;
@@ -506,7 +495,7 @@ void SetTimer_Temperature_Number_Blink(void)
 	}
 
 	//set timer timing  smg blink timing 
-	if(run_t.set_timer_special_value == timing_success  && run_t.gPower_On==1){
+	if(run_t.set_timer_special_value == timing_success  && gpro_t.gPower_On==1){
 		   
 		if(run_t.gTimer_smg_timing < 13){
 
@@ -565,14 +554,14 @@ void SetTimer_Temperature_Number_Blink(void)
 	switch(run_t.set_temperature_flag){
 
 	  case TEMPERATURE_BE_SETUP:
-	  if(run_t.gTimer_key_temp_timing > 4 && run_t.set_temperature_special_value ==0 && run_t.gPower_On==1){
+	  if(run_t.gTimer_key_temp_timing > 4 && run_t.set_temperature_special_value ==0 && gpro_t.gPower_On==1){
 			set_temp_flag++;
 			
 			run_t.set_temperature_special_value =1;
 			run_t.gTimer_set_temp_times =0; //couter time of smg blink timing 
 
 		 }
-	  if(run_t.set_temperature_special_value ==1 && run_t.gPower_On==1){
+	  if(run_t.set_temperature_special_value ==1 && gpro_t.gPower_On==1){
 	  	
 	  	
 		  if(run_t.gTimer_set_temp_times < 15 ){ // 4

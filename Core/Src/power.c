@@ -1,11 +1,4 @@
-#include "single_mode.h"
-#include "run.h"
-#include "smg.h"
-#include "gpio.h"
-#include "cmd_link.h"
-#include "led.h"
-#include "key.h"
-#include "display.h"
+#include "bsp.h"
 
 
 
@@ -108,9 +101,7 @@ static void Timing_Handler(void)
 		SendData_PowerOnOff(0);
 		HAL_Delay(2);
 		
-	  run_t.power_on_recoder_times++; //this is data must be change if not don't "breath led"
-	  run_t.gRunCommand_label = POWER_OFF_PROCESS; //POWER_OFF ; //WT.EDIT 2023.08-16
-	  run_t.power_off_recoder_times=0; //WT.EDIT 2023.08.16
+	
 	  run_t.timer_timing_define_flag = 0xff;
 
 	break;
@@ -162,50 +153,43 @@ static void DisplayPanel_DHT11_Value(void)
 	*Return Ref:NO
 	*
 ******************************************************************************/
-void RunPocess_Command_Handler(void)
+void power_on_handler(void)
 {
-   static uint8_t power_off_flag=0xff,power_off_recoder_times,timer_timing_flag;
- 
-   
-   switch(run_t.gRunCommand_label){
+  
+ switch(gpro_t.main_process_step){
 
-      case RUN_POWER_ON: //2
-         run_t.power_off_recoder_times=0; 
-          run_t.power_on_run_update_data_flag=0;
-      
-          run_t.gRunCommand_label= UPDATE_DATA;
+      case RUN_POWER_ON: //0
+
+          
+		    Power_On_Fun();
+	
+			run_t.timer_timing_define_flag = timing_donot;
+			run_t.send_works_times_to_app=0;
+			
+		   if(run_t.wifi_power_on_flag !=RUN_WIFI_TIMER_POWER_ON){
+			run_t.dispTime_hours=0;
+			run_t.works_dispTime_hours=0;
+			run_t.works_dispTime_minutes=0;
+			run_t.send_app_wokes_minutes_one=0;
+			run_t.send_app_wokes_minutes_two=0;
+			run_t.send_app_timer_minutes_one=0;
+			run_t.send_app_timer_minutes_two=0;
+			SendData_Time_Data(run_t.dispTime_hours);
+			HAL_Delay(5);
+			SendData_Works_Time(run_t.send_app_wokes_minutes_one ,run_t.send_app_wokes_minutes_two);
+			HAL_Delay(5);
+			SendData_Remaining_Time(run_t.send_app_timer_minutes_one, run_t.send_app_timer_minutes_two);
+			HAL_Delay(5);
+         }
+         gpro_t.main_process_step= UPDATE_DATA;// run_t.gRunCommand_label= UPDATE_DATA;
+         
 	  break;
 
 	  case UPDATE_DATA: //3
 
  
-      if(run_t.power_on_run_update_data_flag ==0){
-        
-        Power_On_Fun();
-		run_t.power_on_run_update_data_flag++;
-       }
-       if(timer_timing_flag == 0){
-            timer_timing_flag++;
-            run_t.wifi_power_on_flag = RUN_NULL;
-            run_t.timer_timing_define_flag = timing_donot;
-            run_t.send_works_times_to_app=0;
-           
-            run_t.dispTime_hours=0;
-            run_t.works_dispTime_hours=0;
-            run_t.works_dispTime_minutes=0;
-            run_t.send_app_wokes_minutes_one=0;
-            run_t.send_app_wokes_minutes_two=0;
-            run_t.send_app_timer_minutes_one=0;
-            run_t.send_app_timer_minutes_two=0;
-            SendData_Time_Data(run_t.dispTime_hours);
-            HAL_Delay(2);
-            SendData_Works_Time(run_t.send_app_wokes_minutes_one ,run_t.send_app_wokes_minutes_two);
-            HAL_Delay(2);
-            SendData_Remaining_Time(run_t.send_app_timer_minutes_one, run_t.send_app_timer_minutes_two);
-            HAL_Delay(2);
-
-       }
-	   RunLocal_Smg_Process();
+     
+       RunLocal_Smg_Process();
      
 	   Timing_Handler();
 	  
@@ -219,58 +203,49 @@ void RunPocess_Command_Handler(void)
 	   
 
 	  break;
+ }
 
-	  case RUN_POWER_OFF: //1
+}
+/******************************************************************************
+	*
+	*Function Name:void RunPocess_Command_Handler(void)
+	*Funcion: display pannel run of process 
+	*Input Ref: NO
+	*Return Ref:NO
+	*
+******************************************************************************/
+void power_off_handler(void)
+{
+
+
+
+    switch(gpro_t.main_process_step){
+
+
+	case power_off:
        
-
-      
-          run_t.power_off_recoder_times=0;
-          run_t.power_on_run_update_data_flag=0;
+    
           run_t.timer_timing_define_flag = timing_donot;
           run_t.temp_set_timer_timing_flag=0;
           run_t.define_initialization_timer_time_hours=0;
           run_t.set_timer_special_value = timing_donot;
           run_t.send_works_times_to_app=0;
+		  run_t.wifi_power_on_flag = RUN_NULL;
 	      
-		   run_t.gRunCommand_label =POWER_OFF_PROCESS;
+		  gpro_t.main_process_step = POWER_OFF_PROCESS; //run_t.gRunCommand_label =POWER_OFF_PROCESS;
 	  break;
 
 
 	  
 
 	  case POWER_OFF_PROCESS: //4
-      run_t.power_on_run_update_data_flag=0;
-      run_t.wifi_power_on_flag = RUN_NULL;
-       run_t.define_initialization_timer_time_hours=0;
-
-      
-       timer_timing_flag=0;
-    
-      
-       if(run_t.power_off_recoder_times ==0){
-         run_t.power_off_recoder_times++;
-         
-         Power_Off_Fun();
-
-       }
-
-	   if(run_t.gPower_On ==POWER_OFF || run_t.gPower_On == 0xff){
-
-	      if(power_off_flag !=run_t.power_on_recoder_times){
-		  	  power_off_flag = run_t.power_on_recoder_times;
-	 	  	run_t.gPower_On =0xff;
-		    Breath_Led();
+	  
+          Power_Off_Led_Off();
           
-	      }
-          
-		  if(run_t.gPower_On ==0xff || run_t.gPower_On ==POWER_OFF){
-				Breath_Led();
-		  }
-		  else{
-            run_t.gPower_On = POWER_ON;
-			run_t.gRunCommand_label= UPDATE_DATA;
-		  }
-       }
+		  Breath_Led();
+		  
+		 
+       
 
 	  break;
 
@@ -385,6 +360,7 @@ static void Display_Works_Time_Fun(void)
      while(run_t.send_works_times_to_app==1){
             run_t.send_works_times_to_app=0;
         SendData_Works_Time(run_t.send_app_wokes_minutes_one ,run_t.send_app_wokes_minutes_two);
+	   HAL_Delay(5);
         }
 
 }
@@ -419,6 +395,7 @@ static void Send_WorksTime_ToApp_DonotDisplay_Fun(void)
 	while(run_t.send_works_times_to_app==1){
 		   run_t.send_works_times_to_app=0;
 	   SendData_Works_Time(run_t.send_app_wokes_minutes_one ,run_t.send_app_wokes_minutes_two);
+	   HAL_Delay(5);
 	   }
 }
 /****************************************************************
