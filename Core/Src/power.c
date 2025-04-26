@@ -155,7 +155,7 @@ static void DisplayPanel_DHT11_Value(void)
 ******************************************************************************/
 void power_on_handler(void)
 {
-  
+  uint8_t iidata;
  switch(gpro_t.main_process_step){
 
       case RUN_POWER_ON: //0
@@ -183,7 +183,7 @@ void power_on_handler(void)
 			HAL_Delay(5);
          }
          gpro_t.main_process_step= UPDATE_DATA;// run_t.gRunCommand_label= UPDATE_DATA;
-         
+       
 	  break;
 
 	  case UPDATE_DATA: //3
@@ -217,15 +217,12 @@ void power_on_handler(void)
 ******************************************************************************/
 void power_off_handler(void)
 {
-
-
-
     switch(gpro_t.main_process_step){
 
 
 	case power_off:
        
-    
+          
           run_t.timer_timing_define_flag = timing_donot;
           run_t.temp_set_timer_timing_flag=0;
           run_t.define_initialization_timer_time_hours=0;

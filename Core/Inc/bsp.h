@@ -5,6 +5,7 @@
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
+#include "dma.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -17,7 +18,7 @@
 #include "display.h"
 #include "interrupt_manager.h"
 
-
+#define  DEBUG_SIZE   3
 typedef enum _power_onoff_state{
 
     power_off,
@@ -40,6 +41,7 @@ typedef enum{
   copy_wifi_power_off=3,
   copy_wifi_power_on=4,
   copy_wifi_timer_power_on=5,
+  copy_wifi_det_power_off =6
   
 
 
@@ -51,6 +53,9 @@ typedef struct COMP_CMD_T{
    uint8_t g_copy_cmd ;
    uint8_t gPower_On;
    uint8_t main_process_step;
+   uint8_t g_debug_state[DEBUG_SIZE];
+
+   uint8_t gTimer_debug_counter;
 
 
 
@@ -66,6 +71,8 @@ void displaybaord_process_handler(void);
 void receive_copy_cmd(uint8_t cmd);
 
 
+
+void debug_usart2_send_dat_handler(void);
 
 #endif 
 

@@ -118,6 +118,11 @@ void Error_Handler(void);
 #define WIFI_LED_EN_GPIO_Port 				GPIOC
 
 
+#define USART2_TX_DEBUG_Pin 				GPIO_PIN_2
+#define USART2_TX_DEBUG_GPIO_Port 			GPIOA
+#define USART2_RX_DEBUG_Pin 				GPIO_PIN_3
+#define USART2_RX_DEBUG_GPIO_Port 			GPIOA
+
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

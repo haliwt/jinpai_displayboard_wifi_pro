@@ -187,7 +187,7 @@ static void Receive_Wifi_Cmd(uint8_t cmd)
 				run_t.wifi_send_buzzer_sound = WIFI_POWER_ON_ITEM;
 		    
 				run_t.wifi_link_cloud_flag =WIFI_CLOUD_SUCCESS;
-              
+                gpro_t.g_debug_state[0]= WIFI_POWER_ON_NORMAL;
                 
 			break;
 
@@ -195,14 +195,15 @@ static void Receive_Wifi_Cmd(uint8_t cmd)
              case WIFI_POWER_ON_TIMER: //0xB1 //WT.EDIT 2023.08.21
                  SendData_Copy_Cmd(copy_wifi_timer_power_on);
 				 HAL_Delay(5);
-			 
+			     run_t.wifi_link_cloud_flag =WIFI_CLOUD_SUCCESS;
 			    gpro_t.gPower_On = power_on;
 				gpro_t.main_process_step =0;
                 run_t.wifi_power_on_flag = RUN_WIFI_TIMER_POWER_ON;
              
 				run_t.wifi_send_buzzer_sound = WIFI_POWER_ON_ITEM;
 		      
-				run_t.wifi_link_cloud_flag =WIFI_CLOUD_SUCCESS;
+			
+				gpro_t.g_debug_state[0]= WIFI_POWER_ON_TIMER;
               
 			break;
 
@@ -220,7 +221,7 @@ static void Receive_Wifi_Cmd(uint8_t cmd)
              
                run_t.wifi_power_on_flag = RUN_POWER_OFF_NULL;
 			   run_t.wifi_link_cloud_flag =WIFI_CLOUD_SUCCESS;
-			
+			   gpro_t.g_debug_state[1]= WIFI_POWER_OFF;
             
 
 			 break;
@@ -228,14 +229,14 @@ static void Receive_Wifi_Cmd(uint8_t cmd)
 			 case WIFI_KILL_ON: //kill turn on plasma
 			  if(gpro_t.gPower_On==1){
                	run_t.gPlasma = 1;
-			        
+			     run_t.wifi_link_cloud_flag =WIFI_CLOUD_SUCCESS;   
              } 
 			 break;
 
 			 case WIFI_KILL_OFF: //kill turn off
                 if(gpro_t.gPower_On==1){
 			 	  run_t.gPlasma =0;
-				  
+				   run_t.wifi_link_cloud_flag =WIFI_CLOUD_SUCCESS;
 		          
                 }
 			 break;
@@ -243,7 +244,7 @@ static void Receive_Wifi_Cmd(uint8_t cmd)
 			 case WIFI_PTC_ON://dry turn on
                 if(gpro_t.gPower_On==1){
 			        run_t.gDry =1;
-                    
+                     run_t.wifi_link_cloud_flag =WIFI_CLOUD_SUCCESS;
                  
                 }
 			 break;
@@ -252,6 +253,7 @@ static void Receive_Wifi_Cmd(uint8_t cmd)
                
 			 	if(gpro_t.gPower_On==1){
 					run_t.gDry=0;
+				    run_t.wifi_link_cloud_flag =WIFI_CLOUD_SUCCESS;
                  
 		           
 			 	}
@@ -262,7 +264,7 @@ static void Receive_Wifi_Cmd(uint8_t cmd)
 		
 				 if(gpro_t.gPower_On==1){		   
 				  run_t.gUltrasonic =1; //turn on 
-			
+			       run_t.wifi_link_cloud_flag =WIFI_CLOUD_SUCCESS;
 				 
 			    }
 
@@ -271,7 +273,7 @@ static void Receive_Wifi_Cmd(uint8_t cmd)
 			 case WIFI_SONIC_OFF: //drive bug turn off
 			 	if(gpro_t.gPower_On==1){
 				    run_t.gUltrasonic=0;
-					
+				    run_t.wifi_link_cloud_flag =WIFI_CLOUD_SUCCESS;	
 			   }
 			 break;
 

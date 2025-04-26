@@ -4,10 +4,12 @@ volatile static uint8_t transOngoingFlag; //interrupt Transmit flag bit , 1---st
 uint8_t outputBuf[8];
 static uint8_t transferSize;
 static uint8_t state;
+uint8_t copy_mainboard_cmd; //WT.EDIT 2025.04.22
 uint8_t inputBuf[MAX_BUFFER_SIZE];
 
+uint16_t Error_Counter;
 
-
+uint8_t wifi_link_counter;
 void SendData_Copy_Cmd(uint8_t tdata)
 {
 
@@ -216,7 +218,7 @@ void SendData_Remaining_Time(uint8_t tdata,uint8_t tdata_2)
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
    
-	if(huart==&huart1) // Motor Board receive data (filter)
+	if(huart->Instance == USART1) // Motor Board receive data (filter)
 	{
 		switch(state)
 		{
@@ -274,7 +276,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
                  switch(inputBuf[0]){
 
                   case 0x01:
-                 
+                    wifi_link_counter=0;
                     run_t.wifi_link_cloud_flag =WIFI_CLOUD_SUCCESS;
                     state=0;
                     run_t.decodeFlag=1;
@@ -282,11 +284,16 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
                  break;
 
                  case 0x0:
-                  
-                    run_t.wifi_link_cloud_flag =WIFI_CLOUD_FAIL;
+
+				 wifi_link_counter++;
+				 if(wifi_link_counter > 100){
+				 	wifi_link_counter++;
+                   run_t.wifi_link_cloud_flag =WIFI_CLOUD_FAIL;
                    
-                    state=0;
-                    run_t.decodeFlag=1;
+                   state=0;
+                  
+				 }
+				 state=0;
 
                  break;
 
@@ -312,6 +319,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
             break;
 
             case WIFI_CMD:
+				 wifi_link_counter=0;
                  run_t.wifiCmd[0] =inputBuf[0];
                  state=0;
                  run_t.decodeFlag=1; 
@@ -342,6 +350,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 			case MAIN_BOARD_COPY_CMD:
 
                   //gpro_t.g_copy_cmd = inputBuf[0];
+			    copy_mainboard_cmd = inputBuf[0];
 				  receive_copy_cmd(inputBuf[0]);
 			      state = 0; 
 
@@ -412,17 +421,15 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 		break;
 
 		}
+		__HAL_UART_CLEAR_OREFLAG(&huart1);
 		HAL_UART_Receive_IT(&huart1,inputBuf,1);//UART receive data interrupt 1 byte
 	}
 }
+#if 0
 void USART1_Cmd_Error_Handler(void)
 {
    uint32_t temp;
-   
-
-	
-
-	  if(run_t.gTimer_usart_error >6){
+     if(run_t.gTimer_usart_error >6){
 	  	run_t.gTimer_usart_error=0;
 	
            __HAL_UART_CLEAR_OREFLAG(&huart1);
@@ -440,7 +447,7 @@ void USART1_Cmd_Error_Handler(void)
           
          }
 }
-
+#endif 
         
 /********************************************************************************
 **
@@ -452,10 +459,80 @@ void USART1_Cmd_Error_Handler(void)
 *******************************************************************************/
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {
-	if(huart==&huart1)
+	if(huart->Instance == USART1)
 	{
 		transOngoingFlag=0; //UART Transmit interrupt flag =0 ,RUN
 	}
 	
 }
+/**
+  * @brief  UART错误回调函数，处理USART1通信错误
+  * @param  huart: UART句柄指针
+  */
+
+void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart) 
+{
+    
+
+	if (huart->Instance == USART1) {
+        // 重新初始化或报警
+        #if 0
+          __HAL_UART_CLEAR_OREFLAG(&huart1);
+          __HAL_UART_CLEAR_NEFLAG(&huart1);
+          __HAL_UART_CLEAR_FEFLAG(&huart1);
+           
+          
+          temp=USART1->ISR;
+          temp = USART1->RDR;
+		  
+     
+		  UART_Start_Receive_IT(&huart1,inputBuf,1);
+		 #endif 
+	    /* 1. 清除所有可能出现的错误标志 */
+	    // 使用单条语句清除多个标志（更高效）
+	    __HAL_UART_CLEAR_FLAG(huart, UART_CLEAR_OREF | UART_CLEAR_NEF | UART_CLEAR_FEF);
+
+	    /* 2. 读取状态和数据寄存器（清空残留数据）*/
+	    // 使用UNUSED宏避免编译器警告（如果不需要实际值）
+	    //UNUSED(uint32_t temp_isr = huart->Instance->ISR);  // 读取ISR会清除部分标志
+	    //UNUSED(uint32_t temp_rdr = huart->Instance->RDR);  // 清空接收寄存器
+	      /* 2. 清空寄存器（简洁写法）*/
+		    (void)huart->Instance->ISR;  // 清除状态标志
+		    (void)huart->Instance->RDR;  // 清空接收数据
+
+	    /* 3. 重启接收（带错误检查）*/
+	    if (HAL_UART_GetState(huart) == HAL_UART_STATE_READY) {
+	        HAL_UART_Receive_IT(huart, inputBuf, 1);  // 重新启动单字节中断接收
+	    } else {
+	        // 可选：硬件复位USART（严重错误时）
+	        __HAL_UART_DISABLE(huart);
+	        __HAL_UART_ENABLE(huart);
+	        HAL_UART_Receive_IT(huart, inputBuf, 1);
+	    }
+
+	    /* 4. 可选：记录错误日志或触发报警 */
+	    Error_Counter++;  // 全局错误计数器
+    }
+	else if (huart->Instance == USART2){
+
+		 /* 1. 清除所有可能出现的错误标志 */
+	    // 使用单条语句清除多个标志（更高效）
+	    __HAL_UART_CLEAR_FLAG(huart, UART_CLEAR_OREF | UART_CLEAR_NEF | UART_CLEAR_FEF);
+
+	    /* 2. 读取状态和数据寄存器（清空残留数据）*/
+	    // 使用UNUSED宏避免编译器警告（如果不需要实际值）
+	    //UNUSED(uint32_t temp_isr = huart->Instance->ISR);  // 读取ISR会清除部分标志
+	    //UNUSED(uint32_t temp_rdr = huart->Instance->RDR);  // 清空接收寄存器
+		  /* 2. 清空寄存器（简洁写法）*/
+    (void)huart->Instance->ISR;  // 清除状态标志
+    (void)huart->Instance->RDR;  // 清空接收数据
+
+//		  /* 3. 重启接收（带错误检查）*/
+//	    if (HAL_UART_GetState(huart) == HAL_UART_STATE_READY) {
+//	          // 重新启动单字节中断接收
+//	    }
+
+	}
+}
+
 

@@ -19,6 +19,7 @@
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
+#include "dma.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -67,7 +68,7 @@ void SystemClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+   uint8_t idata;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -90,7 +91,9 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_TIM3_Init();
+  MX_DMA_Init();
   MX_USART1_UART_Init();
+  MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
     HAL_TIM_Base_Start_IT(&htim3);
      UART_Start_Receive_IT(&huart1,inputBuf,1);
@@ -111,7 +114,8 @@ int main(void)
 			gpro_t.gPower_On=power_off;
             run_t.power_times=1;
             run_t.first_power_on_times=1;
-               
+			idata = 0xAA;
+            HAL_UART_Transmit_DMA(&huart2,&idata,1);
 
 	      break;
 
@@ -128,8 +132,10 @@ int main(void)
            }
 
 		  displaybaord_process_handler();
+
+		  debug_usart2_send_dat_handler();
            
-		   USART1_Cmd_Error_Handler();
+		  //USART1_Cmd_Error_Handler();
 			   
 
 
@@ -170,9 +176,9 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
   RCC_OscInitStruct.PLL.PLLM = RCC_PLLM_DIV1;
-  RCC_OscInitStruct.PLL.PLLN = 9;
-  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
-  RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV6;
+  RCC_OscInitStruct.PLL.PLLN = 9;  //9x16MHZ = 144MHZ
+  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2; // 144MHZ/2 = 72MHZ
+  RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV6; // 144MHZ / 6 = 24MHZ
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();

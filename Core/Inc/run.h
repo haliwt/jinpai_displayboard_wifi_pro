@@ -199,7 +199,7 @@ typedef struct __RUN{
 	int8_t dispTime_minutes;
 	int8_t dispTime_seconds;
 
-	uint16_t gTimer_usart_error;
+
    
    uint16_t send_app_timer_total_minutes_data;
   
