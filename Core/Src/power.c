@@ -38,39 +38,25 @@ static void Timing_Handler(void)
 	   if(run_t.gTimer_Counter > 59){
 	    run_t.gTimer_Counter =0;
 		run_t.dispTime_minutes -- ;
-		run_t.send_app_timer_total_minutes_data--;
+		run_t.send_app_timer_total_minutes_value--;
 	    if(run_t.dispTime_minutes <  0 ){
 			 
 		   run_t.dispTime_hours -- ;
 		   run_t.dispTime_minutes =59;
          }
 
-		
-		
-		 if(run_t.dispTime_hours < 0 ){
-		 
-				
-				run_t.gTimer_Counter = 57 ;
-
-            
-				run_t.dispTime_hours=0;
-				
-				run_t.dispTime_minutes=0;
-
-			  
-	
-			}
-		    
-           
-	          run_t.send_app_timer_minutes_one = run_t.send_app_timer_total_minutes_data >> 8;
-			  run_t.send_app_timer_minutes_two = run_t.send_app_timer_total_minutes_data & 0x00ff;
+          
+		  run_t.send_app_timer_minutes_one = (run_t.send_app_timer_total_minutes_value >> 8) & 0xff; //10位
+		  run_t.send_app_timer_minutes_two = run_t.send_app_timer_total_minutes_value & 0xff; //个位
 			 
-			   SendData_Remaining_Time(run_t.send_app_timer_minutes_one, run_t.send_app_timer_minutes_two);
-			   HAL_Delay(5);
+		   SendData_Remaining_Time(run_t.send_app_timer_minutes_one, run_t.send_app_timer_minutes_two);
+		   HAL_Delay(10);
 
-			if(run_t.send_app_timer_total_minutes_data == 0){
 
-			    run_t.timer_counter_to_zero =1;
+           if(gpro_t.g_phone_set_timer_value_flag == 1){
+			if(run_t.send_app_timer_total_minutes_value == 0){
+
+
 
 			    SendData_Time_Data(0); //send timer timing is zero ,this is times is over
                 HAL_Delay(5);
@@ -78,10 +64,34 @@ static void Timing_Handler(void)
 
 				run_t.gTimer_set_temp_times=0; //conflict with send temperatur value 
 				run_t.wifi_led_fast_blink_flag=0;
+
+				run_t.dispTime_hours=0;
+				run_t.dispTime_minutes=0;
 	
 				run_t.gWifi =0;
 
 		    }
+		  }
+		  else{
+                
+                if( run_t.dispTime_hours< 0){
+				    SendData_Time_Data(0); //send timer timing is zero ,this is times is over
+	                HAL_Delay(5);
+				    run_t.timer_timing_define_flag =  timing_power_off;
+
+					run_t.gTimer_set_temp_times=0; //conflict with send temperatur value 
+					run_t.wifi_led_fast_blink_flag=0;
+
+					run_t.dispTime_hours=0;
+					run_t.dispTime_minutes=0;
+		
+					run_t.gWifi =0;
+
+
+                }
+
+
+		  }
             
 	   
 		   	Display_GMT(run_t.dispTime_hours,run_t.dispTime_minutes);
@@ -97,7 +107,6 @@ static void Timing_Handler(void)
 	case timing_power_off:
         
        
-		
 		SendData_PowerOnOff(0);
 		HAL_Delay(5);
 		
@@ -107,7 +116,7 @@ static void Timing_Handler(void)
 	break;
 
 
-	case timing_donot:
+	case normal_time_mode:
 
 	     Display_Works_Time_Fun();
 	     
@@ -163,9 +172,10 @@ void power_on_handler(void)
           
 		    Power_On_Fun();
 	
-			run_t.timer_timing_define_flag = timing_donot;
+			run_t.timer_timing_define_flag = normal_time_mode;
 			run_t.send_works_times_to_app=0;
 			run_t.gTimes_time_counter_seconds=0; //
+			gpro_t.g_phone_set_timer_value_flag = 0;
 			
 		   if(run_t.wifi_power_on_flag !=RUN_WIFI_TIMER_POWER_ON){
 			run_t.dispTime_hours=0;
@@ -223,10 +233,10 @@ void power_off_handler(void)
 	case power_off:
        
           
-          run_t.timer_timing_define_flag = timing_donot;
+          run_t.timer_timing_define_flag = normal_time_mode;
           run_t.temp_set_timer_timing_flag=0;
           run_t.define_initialization_timer_time_hours=0;
-          run_t.set_timer_special_value = timing_donot;
+          run_t.set_timer_special_value = normal_time_mode;
           run_t.send_works_times_to_app=0;
 		  run_t.wifi_power_on_flag = RUN_NULL;
 	      

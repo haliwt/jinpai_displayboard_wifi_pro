@@ -2,14 +2,21 @@
 
 volatile static uint8_t transOngoingFlag; //interrupt Transmit flag bit , 1---stop,0--run
 uint8_t outputBuf[8];
-static uint8_t transferSize;
-static uint8_t state;
+volatile uint8_t transferSize;
+volatile uint8_t state;
 uint8_t copy_mainboard_cmd; //WT.EDIT 2025.04.22
 uint8_t inputBuf[MAX_BUFFER_SIZE];
 
 uint16_t Error_Counter;
 
 uint8_t wifi_link_counter;
+
+static void handleState3(void);
+static void handleState4(void);
+static void handleState5(void);
+static void handleWifiInfo(void);
+
+
 void SendData_Copy_Cmd(uint8_t tdata)
 {
 
@@ -205,8 +212,6 @@ void SendData_Remaining_Time(uint8_t tdata,uint8_t tdata_2)
 
 }
 
-
-
 /********************************************************************************
 	**
 	*Function Name:void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
@@ -217,237 +222,203 @@ void SendData_Remaining_Time(uint8_t tdata,uint8_t tdata_2)
 *******************************************************************************/
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-   
-	if(huart->Instance == USART1) // Motor Board receive data (filter)
-	{
-		switch(state)
-		{
-		case 0:  //#0
-			if(inputBuf[0]=='M')  //hex :4D - "M" -fixed mainboard
-				state=1; //=1
-			break;
-		case 1: //#1
-			if(inputBuf[0]=='A' )
-			{
-				state=2; 
-				
-			}
-			else if(inputBuf[0]=='R' ) 
-			{
-               
-				run_t.wifi_orderByMainboard_label = WIFI_REF_DATA;
-				state=3; 
-			}
-			else if(inputBuf[0]=='Y'){// O ->"copy"
-			     run_t.wifi_orderByMainboard_label = MAIN_BOARD_COPY_CMD;
-				 state=3; 
+    if (huart->Instance == USART1) // Motor Board receive data (filter)
+    {
+        switch (state)
+        {
+        case 0: // #0
+            if (inputBuf[0] == 'M') // hex :4D - "M" - fixed mainboard
+                state = 1;
+            break;
 
-			}
-			else
-				state=0; 
-			break;
-		case 2://#2
-			if(inputBuf[0]=='D' || inputBuf[0]=='W'   || inputBuf[0]=='P' ||inputBuf[0] =='C' || inputBuf[0] == 'B' \
-			  || inputBuf[0]=='T' || inputBuf[0]=='R') //'D'->data , 'W' ->wifi
-			{
-				
-				if(inputBuf[0]=='D') run_t.wifi_orderByMainboard_label=PANEL_DATA; //receive data is single data
-                else if(inputBuf[0]=='W') run_t.wifi_orderByMainboard_label = WIFI_INFO; //wifi data
-                else if(inputBuf[0]=='P') run_t.wifi_orderByMainboard_label = WIFI_TEMP;//temperature 
-				else if(inputBuf[0]=='C') run_t.wifi_orderByMainboard_label = WIFI_CMD; //command 
-				else if(inputBuf[0]=='B') run_t.wifi_orderByMainboard_label = WIFI_BEIJING_TIME;
-				else if(inputBuf[0]=='T') run_t.wifi_orderByMainboard_label = WIFI_SET_TIMING;
-				//else if(inputBuf[0]=='R') run_t.wifi_orderByMainboard_label = WIFI_REF_DATA;
-			    state=3;
-			}
-			else
-				state=0;
-			break;
-            
+        case 1: // #1
+            switch (inputBuf[0])
+            {
+            case 'A':
+                state = 2;
+                break;
+            case 'R':
+                run_t.wifi_orderByMainboard_label = WIFI_REF_DATA;
+                state = 3;
+                break;
+            case 'Y': // O -> "copy"
+                run_t.wifi_orderByMainboard_label = MAIN_BOARD_COPY_CMD;
+                state = 3;
+                break;
+            default:
+                state = 0;
+                break;
+            }
+            break;
+
+        case 2: // #2
+            if (strchr("DWPCTRB", inputBuf[0])) // 'D' -> data, 'W' -> wifi
+            {
+                switch (inputBuf[0])
+                {
+                case 'D':
+                    run_t.wifi_orderByMainboard_label = PANEL_DATA;
+                    break;
+                case 'W':
+                    run_t.wifi_orderByMainboard_label = WIFI_INFO;
+                    break;
+                case 'P':
+                    run_t.wifi_orderByMainboard_label = WIFI_TEMP;
+                    break;
+                case 'C':
+                    run_t.wifi_orderByMainboard_label = WIFI_CMD;
+                    break;
+                case 'B':
+                    run_t.wifi_orderByMainboard_label = WIFI_BEIJING_TIME;
+                    break;
+                case 'T':
+                    run_t.wifi_orderByMainboard_label = WIFI_SET_TIMING;
+                    break;
+                }
+                state = 3;
+            }
+            else
+            {
+                state = 0;
+            }
+            break;
+
         case 3:
-
-            switch(run_t.wifi_orderByMainboard_label){
-             case PANEL_DATA: //3
-                 run_t.gReal_humtemp[0]=inputBuf[0]; //Humidity value 
-                 state = 4;  
-            break;
-            case WIFI_INFO :
-
-                 switch(inputBuf[0]){
-
-                  case 0x01:
-                    wifi_link_counter=0;
-                    run_t.wifi_link_cloud_flag =WIFI_CLOUD_SUCCESS;
-                    state=0;
-                    run_t.decodeFlag=1;
-
-                 break;
-
-                 case 0x0:
-
-				 wifi_link_counter++;
-				 if(wifi_link_counter > 100){
-				 	wifi_link_counter++;
-                   run_t.wifi_link_cloud_flag =WIFI_CLOUD_FAIL;
-                   
-                   state=0;
-                  
-				 }
-				 state=0;
-
-                 break;
-
-                 case 0x52: // link tencent cloud receive return data flag
-				
-					//run_t.wifi_receive_led_fast_led_flag =1;
-                    run_t.wifi_led_fast_blink_flag=1;
-                    state=0;
-		            run_t.decodeFlag=0;
-                    
-				  
-                 break;
-
-            	}
-             
+            handleState3();
             break;
 
-            case WIFI_TEMP ://4 //wifi modify temperature of value
-                 run_t.wifi_set_temperature=inputBuf[0]; 
-                 
-                 state=0;
-                 run_t.decodeFlag=1;
+        case 4:
+            handleState4();
             break;
 
-            case WIFI_CMD:
-				 wifi_link_counter=0;
-                 run_t.wifiCmd[0] =inputBuf[0];
-                 state=0;
-                 run_t.decodeFlag=1; 
+        case 5:
+            handleState5();
             break;
 
-			 case WIFI_BEIJING_TIME:
-			 	
-			  	 run_t.dispTime_hours  = inputBuf[0];
-                 state = 4; 
-             break;
+        default:
+            break;
+        }
 
-             case WIFI_SET_TIMING:
-             	run_t.dispTime_hours  = inputBuf[0];
-				run_t.gTimer_key_timing=0;
-             		 state=0;
-                    run_t.decodeFlag=1; 
- 
-             break;
-
-			 case WIFI_REF_DATA:
-
-			    run_t.gDry = inputBuf[0];
-				state = 4; 
-				 
-			break;
-
-
-			case MAIN_BOARD_COPY_CMD:
-
-                  //gpro_t.g_copy_cmd = inputBuf[0];
-			    copy_mainboard_cmd = inputBuf[0];
-				  receive_copy_cmd(inputBuf[0]);
-			      state = 0; 
-
-
-			break;
-			 
-			 
-
-         	}
-
-            
-        break;
-        
-		case 4: //
-
-		 if(run_t.wifi_orderByMainboard_label == WIFI_BEIJING_TIME){
-		 	  run_t.dispTime_minutes = inputBuf[0];
-				state =5;
-		 }
-		 else if(run_t.wifi_orderByMainboard_label==PANEL_DATA){
-              run_t.gReal_humtemp[1]=inputBuf[0]; //temperature value
-			
-		     state=0;
-		     run_t.decodeFlag=1;
-          }
-		 else if(run_t.wifi_orderByMainboard_label ==WIFI_REF_DATA ){
-
-            
-		     run_t.gPlasma = inputBuf[0];
-			 state = 5; 
-
-
-		 }
-
-		 break;
-           
-        case 5: 
-		if(run_t.wifi_orderByMainboard_label == WIFI_BEIJING_TIME){
-				 run_t.dispTime_seconds = inputBuf[0];
-				 run_t.send_app_timer_total_minutes_data = run_t.dispTime_seconds* 60;
-				 run_t.decodeFlag=1;
-			    state=0;
-		 }
-		 else if(run_t.wifi_orderByMainboard_label ==WIFI_REF_DATA ){
-
-            
-		     run_t.gUltrasonic = inputBuf[0];
-			 if(run_t.gUltrasonic == 1){
-				ULTRASONIC_LED_OnOff(1);
-			 }
-			 else if(run_t.gUltrasonic == 0){
-				ULTRASONIC_LED_OnOff(0);
-			 }
-
-			  state=0;
-             //run_t.decodeFlag=1;  //WT.EDIT 2025.04.07
-
-
-		 }
-		 
-            
-        break;
-
-		
-		
-		default:
-			
-		break;
-
-		}
-		__HAL_UART_CLEAR_OREFLAG(&huart1);
-		HAL_UART_Receive_IT(&huart1,inputBuf,1);//UART receive data interrupt 1 byte
-	}
+        __HAL_UART_CLEAR_OREFLAG(&huart1);
+        HAL_UART_Receive_IT(&huart1, inputBuf, 1); // UART receive data interrupt 1 byte
+    }
 }
-#if 0
-void USART1_Cmd_Error_Handler(void)
+
+static void handleState3(void)
 {
-   uint32_t temp;
-     if(run_t.gTimer_usart_error >6){
-	  	run_t.gTimer_usart_error=0;
-	
-           __HAL_UART_CLEAR_OREFLAG(&huart1);
-            __HAL_UART_CLEAR_NEFLAG(&huart1);
-            __HAL_UART_CLEAR_FEFLAG(&huart1);
-           
-          
-          temp=USART1->ISR;
-          temp = USART1->RDR;
-		  
-     
-		  UART_Start_Receive_IT(&huart1,inputBuf,1);
-       
-		  
-          
-         }
+    switch (run_t.wifi_orderByMainboard_label)
+    {
+    case PANEL_DATA:
+        run_t.gReal_humtemp[0] = inputBuf[0]; // Humidity value
+        state = 4;
+        break;
+
+    case WIFI_INFO:
+        handleWifiInfo();
+        break;
+
+    case WIFI_TEMP:
+        run_t.wifi_set_temperature = inputBuf[0];
+        state = 0;
+        run_t.decodeFlag = 1;
+        break;
+
+    case WIFI_CMD:
+        wifi_link_counter = 0;
+        run_t.wifiCmd[0] = inputBuf[0];
+        state = 0;
+        run_t.decodeFlag = 1;
+        break;
+
+    case WIFI_BEIJING_TIME:
+        run_t.dispTime_hours = inputBuf[0];
+        state = 4;
+        break;
+
+    case WIFI_SET_TIMING:
+        run_t.dispTime_hours = inputBuf[0];
+        run_t.gTimer_key_timing = 0;
+        state = 0;
+        run_t.decodeFlag = 1;
+        break;
+
+    case WIFI_REF_DATA:
+        run_t.gDry = inputBuf[0];
+        state = 4;
+        break;
+
+    case MAIN_BOARD_COPY_CMD:
+        copy_mainboard_cmd = inputBuf[0];
+        receive_copy_cmd(inputBuf[0]);
+        state = 0;
+        break;
+    }
 }
-#endif 
+
+void handleWifiInfo(void)
+{
+    switch (inputBuf[0])
+    {
+    case 0x01:
+        wifi_link_counter = 0;
+        run_t.wifi_link_cloud_flag = WIFI_CLOUD_SUCCESS;
+        state = 0;
+        run_t.decodeFlag = 1;
+        break;
+
+    case 0x00:
+        wifi_link_counter++;
+        if (wifi_link_counter > 100)
+        {
+            run_t.wifi_link_cloud_flag = WIFI_CLOUD_FAIL;
+        }
+        state = 0;
+        break;
+
+    case 0x52: // link tencent cloud receive return data flag
+        run_t.wifi_led_fast_blink_flag = 1;
+        state = 0;
+        run_t.decodeFlag = 0;
+        break;
+    }
+}
+
+static void handleState4(void)
+{
+    if (run_t.wifi_orderByMainboard_label == WIFI_BEIJING_TIME)
+    {
+        run_t.dispTime_minutes = inputBuf[0];
+        state = 5;
+    }
+    else if (run_t.wifi_orderByMainboard_label == PANEL_DATA)
+    {
+        run_t.gReal_humtemp[1] = inputBuf[0]; // Temperature value
+        state = 0;
+        run_t.decodeFlag = 1;
+    }
+    else if (run_t.wifi_orderByMainboard_label == WIFI_REF_DATA)
+    {
+        run_t.gPlasma = inputBuf[0];
+        state = 5;
+    }
+}
+
+static void handleState5(void)
+{
+    if (run_t.wifi_orderByMainboard_label == WIFI_BEIJING_TIME)
+    {
+        run_t.dispTime_seconds = inputBuf[0];
+        run_t.send_app_timer_total_minutes_value = run_t.dispTime_seconds * 60;
+        run_t.decodeFlag = 1;
+        state = 0;
+    }
+    else if (run_t.wifi_orderByMainboard_label == WIFI_REF_DATA)
+    {
+        run_t.gUltrasonic = inputBuf[0];
+        ULTRASONIC_LED_OnOff(run_t.gUltrasonic);
+        state = 0;
+    }
+}
         
 /********************************************************************************
 **
@@ -475,19 +446,8 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
     
 
 	if (huart->Instance == USART1) {
-        // 重新初始化或报警
-        #if 0
-          __HAL_UART_CLEAR_OREFLAG(&huart1);
-          __HAL_UART_CLEAR_NEFLAG(&huart1);
-          __HAL_UART_CLEAR_FEFLAG(&huart1);
-           
-          
-          temp=USART1->ISR;
-          temp = USART1->RDR;
-		  
-     
-		  UART_Start_Receive_IT(&huart1,inputBuf,1);
-		 #endif 
+       
+  
 	    /* 1. 清除所有可能出现的错误标志 */
 	    // 使用单条语句清除多个标志（更高效）
 	    __HAL_UART_CLEAR_FLAG(huart, UART_CLEAR_OREF | UART_CLEAR_NEF | UART_CLEAR_FEF);

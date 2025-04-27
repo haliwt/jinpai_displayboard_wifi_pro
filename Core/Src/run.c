@@ -135,9 +135,9 @@ void Receive_MainBoard_Data_Handler(uint8_t cmd)
  
       break;
 
-      case WIFI_SET_TIMING:
+      case WIFI_SET_TIMING: //smart phone set timer time value 
         
-       
+            gpro_t.g_phone_set_timer_value_flag = 1;//display minutes //WT.EDIT 2025.04.27
             run_t.dispTime_minutes = 0;
              
             run_t.temp_set_timer_timing_flag= 1;
@@ -152,6 +152,8 @@ void Receive_MainBoard_Data_Handler(uint8_t cmd)
 			
 	         run_t.hours_two_bit = n;
 			 run_t.minutes_one_bit = 0;
+
+			 run_t.send_app_timer_total_minutes_value= run_t.dispTime_hours *60; //display minutes //WT.EDIT 2025.04.27
 			 
              TM1639_Write_4Bit_Time(m,run_t.hours_two_bit,run_t.minutes_one_bit,0,0) ; // timer   mode  "H0: xx"
             
@@ -306,11 +308,11 @@ void Power_On_Fun(void)
 		run_t.gDry =1;
 		run_t.gBug =1;
 	   	run_t.gUltrasonic =1;
-		run_t.timer_timing_define_flag=timing_donot;
+		run_t.timer_timing_define_flag=normal_time_mode;
 		run_t.gTimes_time_counter_seconds=0;
 		run_t.dispTime_hours=0;
 		run_t.dispTime_minutes =0;
-		run_t.send_app_timer_total_minutes_data=0;
+		run_t.send_app_timer_total_minutes_value=0;
 		Power_ON_Led(); //WT.EDIT 2025.04.07
     }
  
@@ -322,51 +324,7 @@ void Power_On_Fun(void)
 
 	
 	 powe_on_normal();//WT.EDIT.2025.04.07
-     #if 0
-
-	 if(run_t.timer_counter_to_zero ==1){
-
-	       run_t.timer_counter_to_zero++;
-		   run_t.dispTime_hours=0;
-		   run_t.dispTime_minutes =0;
-		   run_t.send_app_timer_total_minutes_data=0;
-		   run_t.timer_timing_define_flag=timing_donot;
-	
-		   run_t.send_app_wokes_total_minutes_data =0;
-		   run_t.send_app_wokes_minutes_one=0;
-		   run_t.send_app_wokes_minutes_two=0;
-		   run_t.works_dispTime_hours=0;
-		   run_t.works_dispTime_minutes=0;
-		   SendData_Time_Data(0); 
-           HAL_Delay(5);
-		}
-
-	
-	    else if(run_t.timer_timing_define_flag==timing_success || run_t.temp_set_timer_timing_flag== 1){ //power on remeber last powr off of reference
-
-	     run_t.dispTime_hours = run_t.define_initialization_timer_time_hours ;
-         run_t.send_app_timer_total_minutes_data = run_t.define_initialization_timer_time_hours * 60;
-		 run_t.gTimer_minute_Counter =0;
-		 run_t.dispTime_minutes =0;
-		 run_t.send_app_timer_minutes_one = run_t.send_app_timer_total_minutes_data >> 8;
-		 run_t.send_app_timer_minutes_two = run_t.send_app_timer_total_minutes_data & 0x00ff;
-		 SendData_Remaining_Time(run_t.send_app_timer_minutes_one, run_t.send_app_timer_minutes_two);
-         HAL_Delay(5);
-		}
-
-	
-       else{
-	         run_t.dispTime_hours = 0;
-			 run_t.dispTime_minutes = 0;
-		     run_t.send_app_wokes_total_minutes_data =0;
-			 run_t.send_app_wokes_minutes_one=0;
-			 run_t.send_app_wokes_minutes_two=0;
-			 run_t.works_dispTime_hours=0;
-			 run_t.works_dispTime_minutes=0;
-			 SendData_Works_Time(run_t.send_app_wokes_minutes_one, run_t.send_app_wokes_minutes_two);
-			 HAL_Delay(5);
-		}
-     #endif  
+   
         
 
 	  hour_decade=(run_t.dispTime_hours ) /10;

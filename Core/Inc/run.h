@@ -25,7 +25,7 @@ typedef enum WIFI_STATE_T{
 
 typedef enum TIMING_T{
 
-   timing_donot,
+   normal_time_mode,
    timing_success ,
    timing_power_off
 }timing_t;
@@ -148,7 +148,7 @@ typedef struct __RUN{
    uint8_t wifi_orderByMainboard_label;
    uint8_t wifi_normal_power_on_flag;
    uint8_t first_hour_to_zero_flag;
-   uint8_t timer_counter_to_zero ;
+ 
    //usart ref
 
     
@@ -180,7 +180,7 @@ typedef struct __RUN{
 
    uint8_t send_app_timer_minutes_one;
    uint8_t send_app_timer_minutes_two;
-   uint8_t define_initialization_timer_time_hours;
+   
    uint8_t receive_app_timer_time_flag ;
    uint8_t works_dispTime_minutes;
    uint8_t works_dispTime_hours;
@@ -199,9 +199,10 @@ typedef struct __RUN{
 	int8_t dispTime_minutes;
 	int8_t dispTime_seconds;
 
+   uint16_t define_initialization_timer_time_hours;
 
    
-   uint16_t send_app_timer_total_minutes_data;
+   uint16_t send_app_timer_total_minutes_value;
   
 
 
