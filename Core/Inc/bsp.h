@@ -55,10 +55,12 @@ typedef struct COMP_CMD_T{
    uint8_t g_copy_cmd ;
    uint8_t gPower_On;
    uint8_t main_process_step;
-   uint8_t g_phone_set_timer_value_flag;
+
    uint8_t g_debug_state[DEBUG_SIZE];
 
    uint8_t gTimer_debug_counter;
+
+   uint16_t send_app_wokes_total_minutes_data;
 
 
 

@@ -69,7 +69,7 @@ typedef struct __RUN{
 
    uint8_t gTemperature;
  
-   uint8_t gTimer_Counter;
+   uint8_t gTimer_works_times_counter_seconds;
    //key
   
    
@@ -178,8 +178,8 @@ typedef struct __RUN{
    uint8_t send_app_wokes_minutes_two;
    uint8_t send_app_wokes_minutes_one;
 
-   uint8_t send_app_timer_minutes_one;
-   uint8_t send_app_timer_minutes_two;
+   uint16_t send_app_timer_minutes_one;
+   uint16_t send_app_timer_minutes_two;
    
    uint8_t receive_app_timer_time_flag ;
    uint8_t works_dispTime_minutes;
@@ -199,7 +199,7 @@ typedef struct __RUN{
 	int8_t dispTime_minutes;
 	int8_t dispTime_seconds;
 
-   uint16_t define_initialization_timer_time_hours;
+
 
    
    uint16_t send_app_timer_total_minutes_value;

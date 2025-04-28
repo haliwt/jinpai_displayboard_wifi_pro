@@ -50,7 +50,7 @@ void DisplayTiming_KEY_Add_Subtract_Fun(void)
 
 	if(gpro_t.gPower_On==1){
     
-		p=run_t.dispTime_hours  /10%10;
+		p=run_t.dispTime_hours  /10;
 		run_t.hours_two_bit =run_t.dispTime_hours  %10;//q=run_t.dispTime_hours  %10;  //
 		run_t.minutes_one_bit= run_t.dispTime_minutes  /10%10;//m = run_t.dispTime_minutes  /10%10;
 		n=	run_t.dispTime_minutes %10;

@@ -137,7 +137,7 @@ void Receive_MainBoard_Data_Handler(uint8_t cmd)
 
       case WIFI_SET_TIMING: //smart phone set timer time value 
         
-            gpro_t.g_phone_set_timer_value_flag = 1;//display minutes //WT.EDIT 2025.04.27
+           
             run_t.dispTime_minutes = 0;
              
             run_t.temp_set_timer_timing_flag= 1;

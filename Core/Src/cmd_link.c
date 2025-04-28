@@ -355,7 +355,7 @@ static void handleState3(void)
     }
 }
 
-void handleWifiInfo(void)
+static void handleWifiInfo(void)
 {
     switch (inputBuf[0])
     {

@@ -456,7 +456,7 @@ void SetTimer_Temperature_Number_Blink(void)
 				
 		set_timer_flag++;
 		run_t.gTimer_key_timing =0;
-        run_t.gTimer_Counter=0;
+        run_t.gTimer_works_times_counter_seconds=0;
 		if(run_t.dispTime_hours ==0 ){
 		  
 			set_timer_flag=0;
@@ -483,10 +483,10 @@ void SetTimer_Temperature_Number_Blink(void)
 
 		}
 		else{
-			gpro_t.g_phone_set_timer_value_flag = 0; //WT.EDIT 2025.04.27
+		
 			run_t.set_timer_special_value = timing_success;
 			run_t.gTimer_smg_timing =0; //couter time of smg blink timing 
-            run_t.gTimer_Counter=0;
+            run_t.gTimer_works_times_counter_seconds=0;
 			
 		}
 	
@@ -524,10 +524,10 @@ void SetTimer_Temperature_Number_Blink(void)
 			run_t.temp_set_timer_timing_flag=0;
 			run_t.timer_timing_define_flag = timing_success;
 			
-			run_t.define_initialization_timer_time_hours = run_t.dispTime_hours ;//* 60 
-			run_t.send_app_timer_total_minutes_value = run_t.define_initialization_timer_time_hours*60;
 			
-			run_t.gTimer_Counter=0;
+			run_t.send_app_timer_total_minutes_value = run_t.dispTime_hours*60;//60 minutes
+			
+			run_t.gTimer_works_times_counter_seconds=0;
 			while(send_timing_value == 1){
 			   send_timing_value++;
 			   SendData_Time_Data(run_t.dispTime_hours);
