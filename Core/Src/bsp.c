@@ -111,10 +111,6 @@ void debug_usart2_send_dat_handler(void)
       if(gpro_t.gTimer_debug_counter > 3){
 	  	gpro_t.gTimer_debug_counter=0;
 	   debug_usart_send_data(&gpro_t.g_debug_state[0],1);
-	 
-	
-
-	  
 	   HAL_Delay(5);
 
       }

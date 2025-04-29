@@ -189,7 +189,7 @@ static void Receive_Wifi_Cmd(uint8_t cmd)
 				run_t.wifi_send_buzzer_sound = WIFI_POWER_ON_ITEM;
 		    
 				run_t.wifi_link_cloud_flag =WIFI_CLOUD_SUCCESS;
-                gpro_t.g_debug_state[0]= WIFI_POWER_ON_NORMAL;
+                gpro_t.g_debug_state[0]= WIFI_POWER_ON_NORMAL; //0xB0
                 
 			break;
 
@@ -205,7 +205,7 @@ static void Receive_Wifi_Cmd(uint8_t cmd)
 				run_t.wifi_send_buzzer_sound = WIFI_POWER_ON_ITEM;
 		      
 			
-				gpro_t.g_debug_state[0]= WIFI_POWER_ON_TIMER;
+				gpro_t.g_debug_state[0]= WIFI_POWER_ON_TIMER; //0xB1
               
 			break;
 
@@ -223,7 +223,7 @@ static void Receive_Wifi_Cmd(uint8_t cmd)
              
                run_t.wifi_power_on_flag = RUN_POWER_OFF_NULL;
 			   run_t.wifi_link_cloud_flag =WIFI_CLOUD_SUCCESS;
-			   gpro_t.g_debug_state[1]= WIFI_POWER_OFF;
+			   gpro_t.g_debug_state[1]= WIFI_POWER_OFF; //0x81
             
 
 			 break;

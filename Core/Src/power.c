@@ -69,6 +69,9 @@ static void Timing_Handler(void)
 				run_t.dispTime_minutes=0;
 	
 				run_t.gWifi =0;
+				//run_t.timer_timing_define_flag=timing_power_off; //WT.EDIT 2025.04.29
+				SendData_PowerOnOff(0);
+		        HAL_Delay(30);
 
 		    }
 		  
@@ -85,16 +88,16 @@ static void Timing_Handler(void)
 	break;
 
 
-	case timing_power_off:
-        
-       
-		SendData_PowerOnOff(0);
-		HAL_Delay(5);
-		
-	
-	 
-
-	break;
+//	case timing_power_off:
+//        
+//       
+//		SendData_PowerOnOff(0);
+//		HAL_Delay(5);
+//		
+//	
+//	 
+//
+//	break;
 
 
 	case normal_time_mode:
