@@ -446,7 +446,7 @@ void SetTimer_Temperature_Number_Blink(void)
 {
 
     static uint8_t m,n,p,q,counter_timesb,send_timing_value,counter_times;
-    static uint8_t timing_flag,set_timer_flag,set_temp_flag,define_timer_times;
+    static uint8_t timing_flag,set_timer_flag,set_temp_flag ;
 	
 	//set timer timing value 
 	switch(run_t.temp_set_timer_timing_flag){
