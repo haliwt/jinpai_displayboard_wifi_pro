@@ -70,7 +70,7 @@ static void Timing_Handler(void)
 	
 				run_t.gWifi =0;
 				//run_t.timer_timing_define_flag=timing_power_off; //WT.EDIT 2025.04.29
-				SendData_PowerOnOff(0);
+				SendData_PowerOnOff(0xB6);
 		        HAL_Delay(30);
 
 		    }
