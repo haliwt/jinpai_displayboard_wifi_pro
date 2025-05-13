@@ -4,6 +4,7 @@ volatile static uint8_t transOngoingFlag; //interrupt Transmit flag bit , 1---st
 uint8_t outputBuf[8];
 static uint8_t transferSize;
 static uint8_t state;
+uint8_t copy_mainboard_cmd; //WT.EDIT 2025.04.22
 uint8_t inputBuf[MAX_BUFFER_SIZE];
 
 
@@ -342,6 +343,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 			case MAIN_BOARD_COPY_CMD:
 
                   //gpro_t.g_copy_cmd = inputBuf[0];
+			    copy_mainboard_cmd = inputBuf[0];
 				  receive_copy_cmd(inputBuf[0]);
 			      state = 0; 
 
@@ -412,6 +414,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 		break;
 
 		}
+		__HAL_UART_CLEAR_OREFLAG(&huart1);
 		HAL_UART_Receive_IT(&huart1,inputBuf,1);//UART receive data interrupt 1 byte
 	}
 }

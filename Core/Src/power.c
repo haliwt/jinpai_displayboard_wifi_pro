@@ -217,9 +217,6 @@ void power_on_handler(void)
 ******************************************************************************/
 void power_off_handler(void)
 {
-
-
-
     switch(gpro_t.main_process_step){
 
 

@@ -40,6 +40,7 @@ typedef enum{
   copy_wifi_power_off=3,
   copy_wifi_power_on=4,
   copy_wifi_timer_power_on=5,
+  copy_wifi_det_power_off =6
   
 
 

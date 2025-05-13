@@ -129,7 +129,7 @@ int main(void)
 
 		  displaybaord_process_handler();
            
-		   USART1_Cmd_Error_Handler();
+		  //USART1_Cmd_Error_Handler();
 			   
 
 
