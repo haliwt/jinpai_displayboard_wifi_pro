@@ -10,7 +10,7 @@
 *******************************************************************************/
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-  static uint8_t tm0;
+  static uint16_t tm0;
     if(htim->Instance==TIM3){  
     tm0++;
 	
@@ -20,9 +20,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	run_t.gTimer_time_colon++ ;
 	run_t.gTimer_smg_display++;
 
-   
 	
-    if(tm0>99){ //100 *10ms = 1000ms = 1s
+    if(tm0>999){ //100 *10ms = 1000ms = 1s
 		tm0=0;
 		
 	     run_t.gTimer_colon++;
@@ -34,8 +33,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		run_t.gTimer_key_timing++;
 		run_t.gTimer_temperature++;
 		run_t.gTimer_key_temp_timing++ ;
-		run_t.gTimer_wifi_couter++;
+		
 		run_t.gTimer_temp_delay++;
+		run_t.gTimer_wifi_connect_counter++;
+		 
         //usart
      
 	 

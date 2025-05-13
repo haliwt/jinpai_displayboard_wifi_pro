@@ -93,7 +93,7 @@ uint8_t KEY_Scan(void)
 		{
 			if(key_t.read == key_t.buffer) //long key key if be pressed down 
 			{
-				if(++key_t.on_time>95000)// 80000 long key be down
+				if(++key_t.on_time>29000)//95000 //80000 long key be down
 				{
 				    key_t.value = key_t.value|0x90; //key.value = 0x01 | 0x80  =0x81  
 					
@@ -171,27 +171,12 @@ void Process_Key_Handler(uint8_t keylabel)
        
             
             SendData_Set_Wifi(0x01);
-			HAL_Delay(1);
-		  	run_t.gWifi =1;
+			HAL_Delay(5);
+		  
 			run_t.gTimer_set_temp_times=0; //conflict with send temperatur value 
-			do{
-
-               if(run_t.wifi_led_fast_blink_flag==0){
-
-                  SendData_Set_Wifi(0x01);
-                  HAL_Delay(5);
-                  wifi_look_for =1;
-
-               }
-               else{
-                  wifi_look_for =0;
-
-               }
-
-
-            }while(wifi_look_for);
+			
          
-			//run_t.wifi_led_fast_blink_flag=1;
+			run_t.wifi_led_fast_blink_flag=1;
 			run_t.wifi_link_cloud_flag =0;
 			run_t.gTimer_wifi_connect_counter=0;
 	       

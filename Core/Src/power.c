@@ -68,7 +68,7 @@ static void Timing_Handler(void)
 				run_t.dispTime_hours=0;
 				run_t.dispTime_minutes=0;
 	
-				run_t.gWifi =0;
+
 				//run_t.timer_timing_define_flag=timing_power_off; //WT.EDIT 2025.04.29
 				SendData_PowerOnOff(0xB6);
 		        HAL_Delay(30);
@@ -159,6 +159,7 @@ void power_on_handler(void)
 			run_t.timer_timing_define_flag = normal_time_mode;
 			run_t.send_works_times_to_app=0;
 			run_t.gTimes_time_counter_seconds=0; //
+			run_t.wifi_led_fast_blink_flag=0;
 		
 			
 		   if(run_t.wifi_power_on_flag !=RUN_WIFI_TIMER_POWER_ON){
@@ -183,17 +184,24 @@ void power_on_handler(void)
 	  case UPDATE_DATA: //3
 
  
-     
+       wifi_led_fast_blink();
        RunLocal_Smg_Process();
-     
-	   Timing_Handler();
 	  
+       wifi_led_fast_blink();
+	   Timing_Handler();
+	   
+	    wifi_led_fast_blink();
+		
        SetTemperature_Function(); 
+	   wifi_led_fast_blink();
 	   
    	   SetTimer_Temperature_Number_Blink();
-      
+      	wifi_led_fast_blink();
+	  
        Display_TimeColon_Blink_Fun();
+	   wifi_led_fast_blink();
 
+	   
 		
 	   
 
@@ -223,6 +231,7 @@ void power_off_handler(void)
           run_t.set_timer_special_value = normal_time_mode;
           run_t.send_works_times_to_app=0;
 		  run_t.wifi_power_on_flag = RUN_NULL;
+		  run_t.wifi_led_fast_blink_flag=0;
 	      
 		  gpro_t.main_process_step = power_off_run ; //run_t.gRunCommand_label =POWER_OFF_PROCESS;
 	  break;

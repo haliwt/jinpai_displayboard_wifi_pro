@@ -93,7 +93,7 @@ typedef struct __RUN{
  
    uint8_t  gDry;
    uint8_t  gBug;
-   uint8_t  gWifi;
+ 
 
    uint8_t  gUltrasonic;
   
@@ -174,7 +174,7 @@ typedef struct __RUN{
    uint8_t gTimer_smg_timing;
    uint8_t gTimer_temperature;
    uint8_t gTimer_key_temp_timing;
-   uint8_t gTimer_wifi_couter;
+  
    uint8_t send_app_wokes_minutes_two;
    uint8_t send_app_wokes_minutes_one;
 

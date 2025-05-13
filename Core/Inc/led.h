@@ -59,4 +59,8 @@ void powe_on_normal(void);
 
 void ULTRASONIC_LED_OnOff(uint8_t sel);
 
+void wifi_led_fast_blink(void);
+	   
+
+
 #endif 

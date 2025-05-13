@@ -364,7 +364,7 @@ void Power_Off_Fun(void)
 		
 		run_t.wifi_led_fast_blink_flag=0;
 		run_t.gTimer_set_temp_times=0; //conflict with send temperatur value 
-        run_t.gWifi =0;
+  
       
 	
 	   Power_Off_Led_Off();

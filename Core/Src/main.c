@@ -130,7 +130,7 @@ int main(void)
            if(run_t.power_key_interrupt_flag==1){//if(POWER_KEY_VALUE()==1){
             Power_OnOff_Key_Handler();
            }
-
+          wifi_led_fast_blink();
 		  displaybaord_process_handler();
 
 		  debug_usart2_send_dat_handler();

@@ -28,60 +28,69 @@ static void delay_led_times(uint16_t t);
 ************************************************************/
 static void WIFI_LED_OnOff(uint8_t sel)
 {
-
+    static uint8_t slowly_blink_led;
     if(run_t.wifi_link_cloud_flag ==1){
 
            LED_WIFI_ON();
 
 	}
-    else{
+   else{
 
-	if(run_t.wifi_led_fast_blink_flag==1){
+        
+		if(run_t .gTimer_wifi_slowly > 2){
+			run_t .gTimer_wifi_slowly=0;
+              slowly_blink_led = slowly_blink_led ^ 0x01;
 
-	     if(run_t.gTimer_wifi_couter < 134 ){
-	
-		 if(run_t.gTimer_led_500ms > 0 && 	run_t.gTimer_led_500ms< 12){ //12
-		     LED_WIFI_OFF();
-
-		 }
-		 else if(run_t.gTimer_led_500ms>11 && run_t.gTimer_led_500ms<23){
-		 	 LED_WIFI_ON();
-		     
-
-        }
-		else{
-		  	run_t.gTimer_led_500ms=0;
-		     LED_WIFI_OFF();
-
-		}
-	    }
-		else{
-		   	run_t.gTimer_wifi_couter=0;
-		    run_t.wifi_led_fast_blink_flag=0;
-		    run_t.gWifi =0;
-
-		}
-	}
-	else{
-		if(run_t .gTimer_wifi_slowly > 0 &&	run_t .gTimer_wifi_slowly< 2){
+		      if(slowly_blink_led ==1){
 				 LED_WIFI_OFF();
 	
 			 }
-			 else if(run_t .gTimer_wifi_slowly>1 && run_t .gTimer_wifi_slowly< 3){
+			 else{ 
 				 LED_WIFI_ON();
 				 
 	
 			}
-			else{
-				run_t .gTimer_wifi_slowly=0;
-				 LED_WIFI_OFF();
-	
-			}
+		
 
-		}
+		   }
+      }
 
-	}
 }
+
+void wifi_led_fast_blink(void)
+{
+    static uint8_t blink_led;
+
+	if(gpro_t.gPower_On==power_on){
+	if(run_t.wifi_led_fast_blink_flag==1 && run_t.wifi_link_cloud_flag ==0 && run_t.gTimer_wifi_connect_counter <130 ){
+	
+		    
+		
+			 if(run_t.gTimer_led_500ms >50){
+
+			    run_t.gTimer_led_500ms=0;
+			    blink_led = blink_led ^ 0x01;
+			    if(blink_led == 1){
+
+				 LED_WIFI_OFF();
+			    }
+				else{
+				   LED_WIFI_ON();
+
+				}
+			 }
+	
+	 }
+	 else{
+	     run_t.wifi_led_fast_blink_flag=0;
+     }
+	}
+
+
+
+}
+	   
+
 
 static void DRY_LED_OnOff(uint8_t sel)
 {
@@ -152,12 +161,14 @@ void Panel_Led_OnOff_Function(void)
 {
 	
 	LED_POWER_ON();
-	if(run_t.gWifi ==0){
+
+    if(run_t.wifi_led_fast_blink_flag ==0){
+
        WIFI_LED_OnOff(0);
 
+	
+
 	}
-	else
-		WIFI_LED_OnOff(1);
 	 
 	  
     if(run_t.gDry==1){
