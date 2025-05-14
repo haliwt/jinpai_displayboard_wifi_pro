@@ -180,7 +180,7 @@ void Process_Key_Handler(uint8_t keylabel)
 
                   SendData_Set_Wifi(0x01);
                   HAL_Delay(5);
-                  wifi_look_for =1;
+                  wifi_look_for =0;
 
                }
                else{
@@ -191,7 +191,7 @@ void Process_Key_Handler(uint8_t keylabel)
 
             }while(wifi_look_for);
          
-			//run_t.wifi_led_fast_blink_flag=1;
+			run_t.wifi_led_fast_blink_flag=1;
 			run_t.wifi_link_cloud_flag =0;
 			run_t.gTimer_wifi_connect_counter=0;
 	       
