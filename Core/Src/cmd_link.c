@@ -15,6 +15,7 @@ static void handleState3(void);
 static void handleState4(void);
 static void handleState5(void);
 static void handleWifiInfo(void);
+uint8_t timer_hours,test_flag ;
 
 
 void SendData_Copy_Cmd(uint8_t tdata)
@@ -252,35 +253,40 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
             break;
 
         case 2: // #2
-            if (strchr("DWPCTRB", inputBuf[0])) // 'D' -> data, 'W' -> wifi
-            {
+          //  if (strchr("DWPCTRB", inputBuf[0])) // 'D' -> data, 'W' -> wifi
+          //  {
                 switch (inputBuf[0])
                 {
                 case 'D':
                     run_t.wifi_orderByMainboard_label = PANEL_DATA;
+					 state = 3;
                     break;
                 case 'W':
                     run_t.wifi_orderByMainboard_label = WIFI_INFO;
+					 state = 3;
                     break;
                 case 'P':
                     run_t.wifi_orderByMainboard_label = WIFI_TEMP;
+					 state = 3;
                     break;
                 case 'C':
                     run_t.wifi_orderByMainboard_label = WIFI_CMD;
+					 state = 3;
                     break;
                 case 'B':
                     run_t.wifi_orderByMainboard_label = WIFI_BEIJING_TIME;
+					 state = 3;
                     break;
                 case 'T':
-                    run_t.wifi_orderByMainboard_label = WIFI_SET_TIMING;
+                     run_t.wifi_orderByMainboard_label = WIFI_SET_TIMING;//8
+					 state = 3;
                     break;
-                }
-                state = 3;
+				default:
+				  state = 0;
+
+				break;
             }
-            else
-            {
-                state = 0;
-            }
+          
             break;
 
         case 3:
@@ -335,9 +341,14 @@ static void handleState3(void)
         state = 4;
         break;
 
-    case WIFI_SET_TIMING:
+    case WIFI_SET_TIMING: //8
+		test_flag++;
+        timer_hours = inputBuf[0];
         run_t.dispTime_hours = inputBuf[0];
         run_t.gTimer_key_timing = 0;
+	    run_t.timer_timing_define_flag=timing_success;
+		run_t.gTimer_works_times_counter_seconds=0;
+		run_t.dispTime_minutes=0;
         state = 0;
         run_t.decodeFlag = 1;
         break;
@@ -352,6 +363,10 @@ static void handleState3(void)
         receive_copy_cmd(inputBuf[0]);
         state = 0;
         break;
+
+	default:
+		 state = 0;
+		break;
     }
 }
 
@@ -380,6 +395,9 @@ static void handleWifiInfo(void)
         state = 0;
         run_t.decodeFlag = 0;
         break;
+	default:
+		 state = 0;
+		break;
     }
 }
 
@@ -401,6 +419,11 @@ static void handleState4(void)
         run_t.gPlasma = inputBuf[0];
         state = 5;
     }
+	else{
+      
+		 state = 0;
+		
+	}
 }
 
 static void handleState5(void)
@@ -418,6 +441,10 @@ static void handleState5(void)
         ULTRASONIC_LED_OnOff(run_t.gUltrasonic);
         state = 0;
     }
+	else{
+	state = 0;
+
+	}
 }
         
 /********************************************************************************

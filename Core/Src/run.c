@@ -53,14 +53,7 @@ void Power_Off(void)
 
 				
 		}
-	
-		
-		
-		
-	      
-}
-
-
+	}
 /**********************************************************************
 *
 *Functin Name: void Receive_MainBoard_Data_Handler(run_t.single_data)

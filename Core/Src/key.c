@@ -516,7 +516,7 @@ void SetTimer_Temperature_Number_Blink(void)
 			while(send_timing_value == 1){
 			   send_timing_value++;
 			   SendData_Time_Data(run_t.dispTime_hours);
-			   HAL_Delay(5);
+			   HAL_Delay(10);
 			}
 			run_t.send_app_timer_minutes_one = run_t.send_app_timer_total_minutes_value >> 8;
 		    run_t.send_app_timer_minutes_two = run_t.send_app_timer_total_minutes_value & 0x00ff;
