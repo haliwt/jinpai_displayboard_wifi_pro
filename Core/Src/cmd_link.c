@@ -1,5 +1,8 @@
 #include "bsp.h"
 
+
+#define USART_INTERRUPT 0
+
 volatile static uint8_t transOngoingFlag; //interrupt Transmit flag bit , 1---stop,0--run
 uint8_t outputBuf[8];
 volatile uint8_t transferSize;
@@ -26,12 +29,17 @@ void SendData_Copy_Cmd(uint8_t tdata)
 		outputBuf[2]=tdata; //53	//
 		
 	    transferSize=3;
+		#if USART_INTERRUPT
 		if(transferSize)
 		{
 			while(transOngoingFlag);
 			transOngoingFlag=1;
 			HAL_UART_Transmit_IT(&huart1,outputBuf,transferSize);
 		}
+		#else
+        
+          HAL_UART_Transmit_DMA(&huart1,outputBuf,transferSize);
+		#endif 
 
 }
 
@@ -53,12 +61,17 @@ void SendData_PowerOnOff(uint8_t index)
 	outputBuf[3]=index; //53	// 'S' select light command, 'C' close all light command
 	
     transferSize=4;
+	#if USART_INTERRUPT
 	if(transferSize)
 	{
 		while(transOngoingFlag);
 		transOngoingFlag=1;
 		HAL_UART_Transmit_IT(&huart1,outputBuf,transferSize);
 	}
+	#else
+        
+          HAL_UART_Transmit_DMA(&huart1,outputBuf,transferSize);
+	#endif 
 	
 }
 void SendData_Buzzer(void)
@@ -71,12 +84,17 @@ void SendData_Buzzer(void)
 	outputBuf[3]='Z'; //53	// buzzer
 	
     transferSize=4;
+	#if USART_INTERRUPT
 	if(transferSize)
 	{
 		while(transOngoingFlag);
 		transOngoingFlag=1;
 		HAL_UART_Transmit_IT(&huart1,outputBuf,transferSize);
 	}
+	#else
+        
+          HAL_UART_Transmit_DMA(&huart1,outputBuf,transferSize);
+		#endif 
 	
 }
 /*********************************************************
@@ -93,12 +111,17 @@ void SendData_Set_Wifi(uint8_t hdata)
 		outputBuf[3]=hdata; 
 		
 		transferSize=4;
+		#if USART_INTERRUPT
 		if(transferSize)
 		{
 			while(transOngoingFlag);
 			transOngoingFlag=1;
 			HAL_UART_Transmit_IT(&huart1,outputBuf,transferSize);
 		}
+		#else
+        
+          HAL_UART_Transmit_DMA(&huart1,outputBuf,transferSize);
+		#endif 
 	
 }
 /*********************************************************
@@ -116,12 +139,17 @@ void SendData_Set_Command(uint8_t hdata)
 		outputBuf[3]=hdata; //53	//
 		
 		transferSize=4;
+		#if USART_INTERRUPT
 		if(transferSize)
 		{
 			while(transOngoingFlag);
 			transOngoingFlag=1;
 			HAL_UART_Transmit_IT(&huart1,outputBuf,transferSize);
 		}
+		#else
+        
+          HAL_UART_Transmit_DMA(&huart1,outputBuf,transferSize);
+		#endif 
 	
 }
 /*********************************************************
@@ -139,12 +167,17 @@ void SendData_Temp_Data(uint8_t tdata)
 		outputBuf[3]=tdata; //53	//
 		
 		transferSize=4;
+		#if USART_INTERRUPT
 		if(transferSize)
 		{
 			while(transOngoingFlag);
 			transOngoingFlag=1;
 			HAL_UART_Transmit_IT(&huart1,outputBuf,transferSize);
 		}
+		#else
+        
+          HAL_UART_Transmit_DMA(&huart1,outputBuf,transferSize);
+		#endif 
 
 }
 /*********************************************************
@@ -162,12 +195,17 @@ void SendData_Time_Data(uint8_t tdata)
 		outputBuf[3]=tdata; //53	//
 		
 		transferSize=4;
+		#if USART_INTERRUPT
 		if(transferSize)
 		{
 			while(transOngoingFlag);
 			transOngoingFlag=1;
 			HAL_UART_Transmit_IT(&huart1,outputBuf,transferSize);
 		}
+		#else
+        
+          HAL_UART_Transmit_DMA(&huart1,outputBuf,transferSize);
+		#endif 
 
 }
 /*********************************************************
@@ -185,12 +223,17 @@ void SendData_Works_Time(uint8_t tdata,uint8_t tdata_2)
 		outputBuf[3]=tdata_2;
 		
 		transferSize=4;
+		#if USART_INTERRUPT
 		if(transferSize)
 		{
 			while(transOngoingFlag);
 			transOngoingFlag=1;
 			HAL_UART_Transmit_IT(&huart1,outputBuf,transferSize);
 		}
+		#else
+        
+          HAL_UART_Transmit_DMA(&huart1,outputBuf,transferSize);
+		#endif 
 
 }
 
@@ -204,12 +247,17 @@ void SendData_Remaining_Time(uint8_t tdata,uint8_t tdata_2)
 		outputBuf[3]=tdata_2;
 		
 		transferSize=4;
+		#if USART_INTERRUPT
 		if(transferSize)
 		{
 			while(transOngoingFlag);
 			transOngoingFlag=1;
 			HAL_UART_Transmit_IT(&huart1,outputBuf,transferSize);
 		}
+		#else
+        
+          HAL_UART_Transmit_DMA(&huart1,outputBuf,transferSize);
+		#endif 
 
 }
 
