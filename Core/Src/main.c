@@ -95,8 +95,8 @@ int main(void)
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-    HAL_TIM_Base_Start_IT(&htim3);
-     UART_Start_Receive_IT(&huart1,inputBuf,1);
+   HAL_TIM_Base_Start_IT(&htim3);
+   UART_Start_Receive_IT(&huart1,inputBuf,1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -135,11 +135,7 @@ int main(void)
 
 		  debug_usart2_send_dat_handler();
            
-		
-			   
-
-
-		  break;
+		 break;
 
 		  default:
 

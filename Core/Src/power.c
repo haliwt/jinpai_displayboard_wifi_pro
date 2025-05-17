@@ -52,7 +52,8 @@ static void Timing_Handler(void)
 		   SendData_Remaining_Time(run_t.send_app_timer_minutes_one, run_t.send_app_timer_minutes_two);
 		   HAL_Delay(10);
 
-
+            //SendData_Works_Time(run_t.send_app_wokes_minutes_one ,run_t.send_app_wokes_minutes_two);
+			//HAL_Delay(10);
       
 			if(run_t.dispTime_hours < 0){
 
@@ -170,6 +171,7 @@ void power_on_handler(void)
 			run_t.send_app_wokes_minutes_two=0;
 			run_t.send_app_timer_minutes_one=0;
 			run_t.send_app_timer_minutes_two=0;
+			gpro_t.send_app_wokes_total_minutes_data=0;
 			SendData_Time_Data(run_t.dispTime_hours);
 			HAL_Delay(5);
 			SendData_Works_Time(run_t.send_app_wokes_minutes_one ,run_t.send_app_wokes_minutes_two);
@@ -177,6 +179,7 @@ void power_on_handler(void)
 			SendData_Remaining_Time(run_t.send_app_timer_minutes_one, run_t.send_app_timer_minutes_two);
 			HAL_Delay(5);
          }
+	
          gpro_t.main_process_step= UPDATE_DATA;// run_t.gRunCommand_label= UPDATE_DATA;
        
 	  break;
@@ -230,9 +233,10 @@ void power_off_handler(void)
        
           run_t.set_timer_special_value = normal_time_mode;
           run_t.send_works_times_to_app=0;
-		  run_t.wifi_power_on_flag = RUN_NULL;
+		  //run_t.wifi_power_on_flag = RUN_NULL;
 		  run_t.wifi_led_fast_blink_flag=0;
-	      
+	      run_t.wifi_power_on_flag=0;
+		  gpro_t.send_app_wokes_total_minutes_data=0;
 		  gpro_t.main_process_step = power_off_run ; //run_t.gRunCommand_label =POWER_OFF_PROCESS;
 	  break;
 
@@ -359,13 +363,13 @@ static void Display_Works_Time_Fun(void)
         }
 
 	
-     while(run_t.send_works_times_to_app==1){
+     if(run_t.send_works_times_to_app==1){
             run_t.send_works_times_to_app=0;
 			run_t.send_app_wokes_minutes_one= gpro_t.send_app_wokes_total_minutes_data >> 8;
              run_t.send_app_wokes_minutes_two=gpro_t.send_app_wokes_total_minutes_data & 0xFF;
         	SendData_Works_Time(run_t.send_app_wokes_minutes_one ,run_t.send_app_wokes_minutes_two);
-	   		HAL_Delay(5);
-        }
+	   		HAL_Delay(10);
+       }
 
 }
 
